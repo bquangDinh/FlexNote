@@ -1,0 +1,294 @@
+/*Typography*/
+@import 'https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:300,400';
+
+/*GENERAL STYLES*/
+
+/*MIXINS*/
+
+/*EXTENDS*/
+
+/*Breakpoints*/
+$screen-sm-min: 576px;
+
+$screen-md-min: 768px;
+
+$screen-lg-min: 992px;
+
+$screen-xl-min: 1200px;
+
+@mixin sm {
+    @media (max-width: #{$screen-sm-min}){
+        @content;
+    }
+}
+
+@mixin md {
+    @media (max-width: #{$screen-md-min}){
+        @content;
+    }
+}
+
+@mixin lg {
+    @media (max-width: #{$screen-lg-min}){
+        @content;
+    }
+}
+
+@mixin xl {
+    @media (max-width: #{$screen-xl-min}){
+        @content;
+    }
+}
+
+/*Tab*/
+/*Colors*/
+$blue: #428BFF;
+$red: #FF4A53;
+$dark: #333;
+
+$accent: $blue;
+$accent-inactive: desaturate($accent, 85%);
+$secondary: $accent-inactive;
+
+/*Tab settings*/
+$tab-count: 4;
+$indicator-width: 50px;
+$indicator-height: 4px;
+
+/*Breakpoints*/
+$breakpoints: (
+    medium: #{$tab-count * 250px},
+    small: #{$tab-count * 150px}
+);
+
+/*Selectors <-> radio inputs*/
+$label-selector: "~ ul > li";
+$slider-selector: "~ .slider";
+$content-selector: "~ .content > section";
+
+@mixin tabs (
+    $label-selector: $label-selector, 
+    $slider-selector: $slider-selector, 
+    $content-selector: $content-selector
+    ){
+    @for $i from 1 through $tab-count {
+        &:nth-of-type(#{$i}):checked{
+            #{$label-selector}:nth-child(#{$i}){
+                @content;
+            }
+            
+            #{$slider-selector}{
+                transform: translateX(#{100% * ($i - 1)});
+            }
+
+            #{$content-selector}:nth-child(#{$i}){
+                display: block;
+            }
+        }
+    }
+}
+
+.gip-upper-layer{
+    &{
+        position: fixed;
+        top: 20px;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        width: 40%;
+        height: 90%;
+        background-color: white;
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        border-radius: 5px;
+
+        @include sm {
+            top: auto;
+            left: 20px;
+            bottom: 20px;
+            right: 20px;
+            height: 50%;
+            width: auto;
+        }
+    }
+
+    .gip-tabs{
+        &{
+            position: relative;
+            padding: 50px;
+            padding-bottom: 80px;
+            height: 100%;
+            min-width: #{$tab-count * 60px};
+        }
+
+        input[name='gip-tab-control']{
+            &{
+                display: none;
+            }
+            
+            @include tabs{
+                > label{
+                    &{
+                        cursor: default;
+                        color: $accent;
+                    }
+
+                    @media (max-width: map-get($breakpoints, small)) {
+                        background: rgba(0,0,0,0.8);
+                    }
+                }
+            }
+        }
+
+        .content section h2, ul li label{
+            font-family: "Montserrat";
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: $accent;
+        }
+
+        ul{
+            &{
+                list-style-type: none;
+                padding-left: 0;
+                display: flex;
+                flex-direction: row;
+                margin-bottom: 10px;
+                justify-content: space-between;
+                align-items: flex-end;
+                flex-wrap: wrap;
+            }
+
+            li{
+                &{
+                    box-sizing: border-box;
+                    flex: 1;
+                    width: #{100%/$tab-count};
+                    padding: 0 10px;
+                    text-align: center;
+                }
+
+                label{
+                    &{
+                        transition: all .2s ease-in-out;
+                        color: $secondary;
+                        padding: 5px auto;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                        cursor: pointer;
+                        white-space: nowrap;
+                        -webkit-touch-callout: none;
+                        //@include user-select(none);
+                    }
+
+                    br{
+                        display: none;
+                    }
+
+                    &:hover,
+                    &:focus,
+                    &:active{
+                        outline: 0;
+                        color: lighten($secondary, 15%);  
+                    }
+                }
+            }
+        }
+
+        .slider{
+            &{
+                position: relative;
+                width: #{100%/$tab-count};
+                transition: all .3s cubic-bezier(0.38, 0.8, 0.32, 1.07);
+            }
+
+            .indicator{
+                position: relative;
+                width: $indicator-width;
+                max-width: 100%;
+                margin: 0 auto;
+                height: $indicator-height;
+                background-color: $accent;
+                border-radius: 1px;
+            }
+        }
+
+        .content{
+            &{
+                margin-top: 30px;
+                height: 100%
+            }
+
+            section{
+                width: 100%;
+                height: 100%;
+                display: none;
+                animation: {
+                    name: content;
+                    direction: normal;
+                    duration: .3s;
+                    timing-function: ease-in-out;
+                    iteration-count: 1
+                };
+                line-height: 1.4;
+            }
+
+            section:first-child{
+                iframe{
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        }
+    }
+}
+
+.gip-btn{
+    $btn-background: #ecf0f1;
+
+    &{
+        position: absolute; 
+        z-index: 9999; 
+        background-color: $btn-background;
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid rgb(22, 22, 22);
+    }
+}
+
+@keyframes content{
+    from {
+        opacity: 0;
+        transform: translateY(5%);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}
+
+@media (max-width: map-get($breakpoints, medium)) {
+    .gip-tabs ul li label {
+      white-space: initial;
+    }
+  }
+  
+@media (max-width: map-get($breakpoints, small)) {
+    .gip-tabs ul li label {
+      padding: 5px;
+      border-radius: 5px;
+    }
+    
+    .gip-tabs .slider {
+      display: none;
+    }
+    
+    .gip-tabs .content {
+      margin-top: 20px; 
+      section h2 {
+        display: block;
+      }
+    }
+}
+
+//https://codepen.io/woranov/pen/NRqLWK

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/vendors/fontawesome/all.css">
+</head>
+<body>
+    <div class="gip-upper-layer">
+        <!--Tabs Bar-->
+        <div class="gip-tabs">
+            <input type="radio" id="gip-tab1" name="gip-tab-control" checked>
+            <input type="radio" id="gip-tab2" name="gip-tab-control">
+            <input type="radio" id="gip-tab3" name="gip-tab-control">
+            <input type="radio" id="gip-tab4" name="gip-tab-control">
+        
+            <ul>
+                <li title="Wikipedia">
+                    <label for="gip-tab1" role="button">
+                        <i class="fab fa-wikipedia-w"></i>
+                        
+                    </label>
+                </li>
+                <li title="Translate">
+                    <label for="gip-tab2" role="button">
+                        <i class="fas fa-language"></i>
+                     
+                    </label>
+                </li>
+                <li title="Oxford Dictionaries">
+                    <label for="gip-tab3" role="button">
+                        <i class="fas fa-spell-check"></i>
+                      
+                    </label>
+                </li>
+                <li title="Your Highlights">
+                    <label for="gip-tab4" role="button">
+                        <i class="fas fa-highlighter"></i>
+                        
+                    </label>
+                </li>
+            </ul>
+
+            <div class="slider">
+                <div class="indicator"></div>
+            </div>
+
+            <div class="content">
+                <section id="gip-wk-page">
+                    <iframe src="https://en.wikipedia.org/wiki/Main_Page" frameborder="0"></iframe>
+                </section>
+                <section></section>
+                <section></section>
+                <section></section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
