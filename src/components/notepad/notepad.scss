@@ -78,6 +78,7 @@ $content-selector: "~ .content > section";
 
         &:hover,
         &:focus{
+            outline: 0;
             background-color: darken($color: #e74c3c, $amount: 20%)
         }
     }

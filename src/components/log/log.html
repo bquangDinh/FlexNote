@@ -1,17 +1,21 @@
-<div class="log">
+<div class="log" :class="{ hide : shouldHide }">
+  <button class="hide-log-btn" v-on:click="switchLogDisplay">
+    <font-awesome-icon icon="chevron-down" v-if="shouldHide == false"></font-awesome-icon>
+    <font-awesome-icon icon="chevron-up" v-else></font-awesome-icon>
+  </button>
   <div class="log-header">
     <span>
       Selected text
     </span>
     <div class="word-count">
-      Words count: <span>5</span>
+      Words count: <span>{{ header.length }}</span>
     </div>
   </div>
   <div class="selected-text">
-    The easiest way to tweak the webpack 
+    {{ header }}
   </div>
   <div class="main">
-    <slick-list></slick-list>
+    <slick-list v-bind:items="wikiResultsList" v-on:choose-name="sendNameBacktoNotePad"></slick-list>
   </div>
 </div>
 

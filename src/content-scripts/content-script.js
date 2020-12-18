@@ -7,11 +7,11 @@ import SelectionMenu from 'selection-menu';
 /*FontAwesome*/
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faWikipediaW } from '@fortawesome/free-brands-svg-icons';
-import { faHighlighter, faLanguage, faAtlas, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faHighlighter, faLanguage, faAtlas, faTimes, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 /*Add every using icon to library*/
-library.add(faWikipediaW, faLanguage, faAtlas, faHighlighter, faTimes);
+library.add(faWikipediaW, faLanguage, faAtlas, faHighlighter, faTimes, faChevronDown, faChevronUp);
 
 //register FontAwesomeIcon component to Vuejs
 Vue.component('font-awesome-icon', FontAwesomeIcon);

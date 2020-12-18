@@ -1,3 +1,42 @@
-.slick-list {
+$item-btn-color: #ecf0f1;
 
+.slick-list {
+    &{
+        overflow: hidden;
+    }
+
+    .header{
+        &{
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #keep-original-checkbox-lb{
+            margin-right: 25px;
+        }
+    }
+
+    .list{
+        &{
+            min-width: min-content;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            overflow-y: auto;
+            margin-right: 25px;
+        }
+
+        .item-btn{
+            background-color: $item-btn-color;
+            border-radius: 5px;
+            border: 0;
+            margin: 0 5px 0 5px;
+            padding: 5px;
+            cursor: pointer;
+        }
+    }
 }

@@ -1,5 +1,17 @@
-
-<section class="slick-list">
-  <h1>slick-list Component</h1>
-</section>
+<div class="slick-list">
+  <div class="header">
+    <div class="title">
+      Another results from Wikipedia:
+    </div>
+    <label for="keep-original-checkbox" id="keep-original-checkbox-lb">
+      <input type="checkbox" id="keep-original-checkbox" v-model="keepOriginal">
+      Keep the original results
+    </label>  
+  </div>
+  <div class="list">
+    <button class="item-btn" v-for="item in items" v-on:click="sendNameBacktoParent(item)">
+      {{ item }}
+    </button>
+  </div>
+</div>
 

@@ -18,8 +18,10 @@ export default {
       styleObject: { top: '20px', left: '55vw' },
       isDragging: false,
       fetchConfig: {
-        wikipediaFetchUrl: "https://en.wikipedia.org/wiki/Main_Page"
-      }
+        wikipediaFetchUrl: "https://en.wikipedia.org/wiki/Main_Page",
+        wikipediaResultsList: []
+      },
+      currentSelectedText: ''
     }
   },
   computed: {
@@ -60,37 +62,59 @@ export default {
     mouseup: function(e){
       this.isDragging = false;
     },
-    setFetchConfig: async function(selectedText){
-      var fetchWikiByTerm = async function(term){
-        let params = {
-          action: 'query',
-          list: 'search',
-          srsearch: term,
-          format: 'json'
-        };
-        let responseUrl = '';
-        let apiUrl = "https://en.wikipedia.org/w/api.php"; 
-        let wikiUrl = "https://en.wikipedia.org/wiki/";
+    fetchWikiByTerm: async function(term){
+      var that = this;
 
-        let completeApiUrl = apiUrl + "?origin=*";
-
-        Object.keys(params).forEach(function(key){
-          completeApiUrl += '&' + key + '=' + params[key];
-        });
-
-        await fetch(completeApiUrl)
-        .then(function(response) { return response.json() })
-        .then(function(response) {
-          if(response.query.search.length > 0){
-            responseUrl = wikiUrl + response.query.search[0].title;
-          }      
-        })
-        .catch(function(error) { console.error(error) });
-
-        return responseUrl;
+      let params = {
+        action: 'query',
+        list: 'search',
+        srsearch: term,
+        format: 'json'
       };
+      let responseUrl = '';
+      let apiUrl = "https://en.wikipedia.org/w/api.php"; 
+      let wikiUrl = "https://en.wikipedia.org/wiki/";
 
-      this.fetchConfig.wikipediaFetchUrl = await fetchWikiByTerm(selectedText);
+      let completeApiUrl = apiUrl + "?origin=*";
+
+      Object.keys(params).forEach(function(key){
+        completeApiUrl += '&' + key + '=' + params[key];
+      });
+
+      await fetch(completeApiUrl)
+      .then(function(response) { return response.json() })
+      .then(function(response) {
+        if(response.query.search.length > 0){
+          responseUrl = wikiUrl + response.query.search[0].title;
+          console.log(response.query.search);
+          if(response.query.search.length > 5){
+            that.fetchConfig.wikipediaResultsList = response.query.search.slice(1, 6).map(item => item.title);
+          }else{
+            that.fetchConfig.wikipediaResultsList = response.query.search.map(item => item.title);
+          }
+        }      
+      })
+      .catch(function(error) { console.error(error) });
+
+      return responseUrl;
+    },
+    setFetchConfig: async function(selectedText){
+      selectedText = selectedText.trim();
+      this.currentSelectedText = selectedText;
+      this.fetchConfig.wikipediaFetchUrl = await this.fetchWikiByTerm(selectedText);
+    },
+    setWikipediaUrlByTitle: async function(titleObj){
+      let title = titleObj.name.trim().replace(' ', '_');
+      let url = '';
+      this.currentSelectedText = title;
+
+      if(titleObj.keepOriginal){
+        let wikiUrl = "https://en.wikipedia.org/wiki/";
+        url = wikiUrl + title;
+        this.fetchConfig.wikipediaFetchUrl = url;
+      }else{
+        this.fetchConfig.wikipediaFetchUrl = await this.fetchWikiByTerm(title);
+      }
     },
     closeNotePad: function(){
       this.hide();

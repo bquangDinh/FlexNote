@@ -48,7 +48,7 @@
     </div>
   </div>
   <div class="footer">
-    <log></log>
+    <log v-bind:header="currentSelectedText" v-bind:wikiResultsList="fetchConfig.wikipediaResultsList" v-on:wikipedia-fetch-result="setWikipediaUrlByTitle($event)"></log>
   </div>
 </div>
 
