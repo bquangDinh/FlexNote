@@ -1,5 +1,54 @@
+<div class="notepad" v-bind:style="styleObject" v-if="isShowing">
+  <div class="draggable-header" v-bind:class="{ dragging: isDragging }" v-if="isShowing" @mousedown="mousedown" @mousemove="mousemove" @mouseup="mouseup"></div>
+  <button id="close-button" v-on:click="closeNotePad">
+    <font-awesome-icon icon="times"></font-awesome-icon>
+  </button>
+  <div class="tabs">
+    <input type="radio" id="tab1" name="tab-control" checked>
+    <input type="radio" id="tab2" name="tab-control">
+    <input type="radio" id="tab3" name="tab-control">
+    <input type="radio" id="tab4" name="tab-control">
 
-<section class="notepad">
-  <h1>notepad Component</h1>
-</section>
+    <ul>
+        <li title="Wikipedia">
+            <label for="tab1" role="button">
+                <font-awesome-icon :icon="['fab', 'wikipedia-w']"></font-awesome-icon>
+            </label>
+        </li>
+        <li title="Translate">
+            <label for="tab2" role="button">
+                <font-awesome-icon icon="language"></font-awesome-icon>
+            </label>
+        </li>
+        <li title="Oxford Dictionaries">
+            <label for="tab3" role="button">
+                <font-awesome-icon icon="atlas"></font-awesome-icon>
+            </label>
+        </li>
+        <li title="Your Highlights">
+            <label for="tab4" role="button">
+              <font-awesome-icon icon="highlighter"></font-awesome-icon>
+            </label>
+        </li>
+    </ul>
+
+    <!--
+    <div class="slider">
+        <div class="indicator"></div>
+    </div>
+  -->
+
+    <div class="content">
+        <section id="wikipedia-section">
+            <iframe :src="fetchConfig.wikipediaFetchUrl" frameborder="0"></iframe>
+        </section>
+        <section></section>
+        <section></section>
+        <section></section>
+    </div>
+  </div>
+  <div class="footer">
+    <log></log>
+  </div>
+</div>
 

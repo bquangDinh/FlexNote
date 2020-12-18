@@ -1,4 +1,15 @@
+var webpack = require('webpack');
+
 module.exports = {
+  configureWebpack: {
+    plugins: [
+      new webpack.ProvidePlugin({
+        tether: 'tether',
+        Tether: 'tether',
+        'window.Tether': 'tether'
+      })
+    ]
+  },
   pages: {
     popup: {
       template: 'public/browser-extension.html',

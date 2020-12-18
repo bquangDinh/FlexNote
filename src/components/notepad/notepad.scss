@@ -1,3 +1,255 @@
-.notepad {
+/*Typography*/
+@import 'https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:300,400';
 
+/*Tab*/
+/*Colors*/
+$blue: #428BFF;
+$red: #FF4A53;
+$dark: #333;
+$accent: $blue;
+$accent-inactive: desaturate($accent, 85%);
+$secondary: $accent-inactive;
+
+/*Tab settings*/
+$tab-count: 4;
+$indicator-width: 50px;
+$indicator-height: 4px;
+
+/*Breakpoints*/
+$breakpoints: (
+    medium: #{$tab-count * 250px},
+    small: #{$tab-count * 150px}
+);
+
+/*Selectors <-> radio inputs*/
+$label-selector: "~ ul > li";
+$slider-selector: "~ .slider";
+$content-selector: "~ .content > section";
+
+@mixin tabs (
+    $slider-selector: $slider-selector, 
+    $content-selector: $content-selector
+    ){
+    @for $i from 1 through $tab-count {
+        &:nth-of-type(#{$i}):checked{
+            #{$label-selector}:nth-child(#{$i}){
+                @content;
+            }
+            
+            #{$slider-selector}{
+                transform: translateX(#{100% * ($i - 1)});
+            }
+            #{$content-selector}:nth-child(#{$i}){
+                display: block;
+            }
+        }
+    }
 }
+
+.notepad {
+    &{
+        position: fixed;
+        z-index: 9999;
+        width: 40%;
+        height: 90%;
+        background-color: white;
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        border-radius: 15px;
+        resize: both;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    #close-button{
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #e74c3c;
+        transition: background-color .3s;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 0;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        z-index: 999;
+
+        &:hover,
+        &:focus{
+            background-color: darken($color: #e74c3c, $amount: 20%)
+        }
+    }
+
+    .draggable-header{
+        &{
+            width: 100%;
+            max-height: 20px;
+            flex: 0 0 20px;
+            border-radius: 15px 15px 0 0 ;
+            background-color: $accent;
+            transition: background-color .2s;
+            cursor: grabbing;        
+        }
+
+        &.dragging{
+            &{
+                background-color: #2ecc71;
+            }
+        }
+    }
+
+    .tabs{
+        &{
+            flex: 1;
+            position: relative;
+            padding: 20px;
+            height: 100%;
+            min-width: #{$tab-count * 60px};
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[name='tab-control']{
+            &{
+                display: none;
+            }
+            
+            @include tabs{
+                > label{
+                    &{
+                        cursor: default;
+                        color: $accent;
+                    }
+
+                    @media (max-width: map-get($breakpoints, small)) {
+                        background: rgba(0,0,0,0.8);
+                    }
+                }
+            }
+        }
+
+        .content section h2, ul li label{
+            //font-family: "Montserrat";
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: $accent;
+        }
+
+        ul{
+            &{
+                flex: 0 0 40px;
+                list-style-type: none;
+                padding-left: 0;
+                display: flex;
+                flex-direction: row;
+                margin-bottom: 10px;
+                justify-content: space-between;
+                align-items: flex-end;
+                flex-wrap: wrap;
+            }
+
+            li{
+                &{
+                    box-sizing: border-box;
+                    flex: 1;
+                    width: #{100%/$tab-count};
+                    padding: 0 10px;
+                    text-align: center;
+                }
+
+                label{
+                    &{
+                        transition: all .2s ease-in-out;
+                        color: $secondary;
+                        padding: 5px auto;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                        cursor: pointer;
+                        white-space: nowrap;
+                        -webkit-touch-callout: none;
+                        text-align: center;
+                        //@include user-select(none);
+                    }
+
+                    &:hover,
+                    &:focus,
+                    &:active{
+                        outline: 0;
+                        color: lighten($secondary, 15%);  
+                    }
+                }
+            }
+        }
+
+        /*
+        .slider{
+            &{
+                position: absolute;
+                width: #{100%/$tab-count};
+                transition: all .3s cubic-bezier(0.38, 0.8, 0.32, 1.07);
+            }
+
+            .indicator{
+                position: relative;
+                width: $indicator-width;
+                max-width: 100%;
+                margin: 0 auto;
+                height: $indicator-height;
+                background-color: $accent;
+                border-radius: 1px;
+            }
+        }
+        */
+
+        .content{
+            &{
+                flex: 1;
+                margin-top: 30px;
+                height: 100%
+            }
+
+            section{
+                width: 100%;
+                height: 100%;
+                display: none;
+                animation: {
+                    name: content;
+                    direction: normal;
+                    duration: .3s;
+                    timing-function: ease-in-out;
+                    iteration-count: 1
+                };
+                line-height: 1.4;
+            }
+
+            #wikipedia-section{
+                iframe{
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        }
+    }
+
+    .footer{
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+    }
+}
+
+@keyframes content{
+    from {
+        opacity: 0;
+        transform: translateY(5%);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}
+//https://codepen.io/woranov/pen/NRqLWK
