@@ -1,0 +1,22 @@
+$accent-color: #428BFF;
+$accent-inactive: desaturate($accent-color, 85%);
+
+.reveal-btn {
+    &{
+        position: absolute;
+        color: $accent-inactive;
+        font-weight: bold;
+        background-color: white;
+        border: 1px solid #222222;
+        box-shadow: 2px 2px #303030;
+        padding: 5px;
+        border-radius: 5px;
+        z-index: 99999;
+    }
+
+    &:hover,
+    &:focus,
+    &:active{
+        color: $accent-color;
+    }
+}
