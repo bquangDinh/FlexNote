@@ -1,0 +1,64 @@
+.custom-select {
+    &{
+        outline: 0;
+        position: relative;
+    }
+
+    .select-selected{
+        &{
+            margin: 10px;
+            padding: 5px 0 5px 10px;
+            border-radius: 5px;
+            border: 1px solid gray;
+            background-color: #ecf0f1;
+            cursor: pointer;
+            position: relative;
+        }
+
+        &::after{
+            font-family: "Font Awesome 5 Free"; 
+            font-weight: 900;
+            content: "\f078";
+            position: absolute;
+            top: 6px;
+            right: 10px;
+        }
+    }
+
+    .options{
+        &{
+            position: absolute;
+            top: 35px;
+            left: 10px;
+            right: 10px;
+            z-index: 99;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .option{
+            &{
+                padding: 5px 0px 5px 10px;
+                background-color: #ecf0f1;
+                cursor: pointer;
+            }
+
+            &:not(:last-child){
+                border-bottom: 1px solid gray;
+            }
+
+            &:first-child{
+                border-radius: 5px 5px 0 0;
+            }
+
+            &:last-child{
+                border-radius: 0 0 5px 5px;
+            }
+
+            &.selected{
+                background-color: #3498db;
+                color: white;
+            }
+        }
+    }
+}

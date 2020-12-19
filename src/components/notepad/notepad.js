@@ -1,9 +1,11 @@
 import Log from '../log/index.vue';
+import TranslateWidget from '../translate-widget/index.vue';
 
 export default {
   name: 'notepad',
   components: {
-    Log
+    Log,
+    TranslateWidget
   },
   props: [],
   data () {
@@ -21,7 +23,8 @@ export default {
         wikipediaFetchUrl: "https://en.wikipedia.org/wiki/Main_Page",
         wikipediaResultsList: []
       },
-      currentSelectedText: ''
+      currentSelectedText: '',
+      currentSection: 'wiki'
     }
   },
   computed: {
@@ -38,6 +41,9 @@ export default {
     },
     hide: function(){
       this.isShowing = false
+    },
+    changeSection: function(sectioName){
+      this.currentSection = sectioName;
     },
     mousedown: function(e){
       this.isDragging = true;

@@ -11,21 +11,21 @@
 
     <ul>
         <li title="Wikipedia">
-            <label for="tab1" role="button">
+            <label for="tab1" role="button" v-on:click="changeSection('wiki')">
                 <font-awesome-icon :icon="['fab', 'wikipedia-w']"></font-awesome-icon>
             </label>
         </li>
         <li title="Translate">
-            <label for="tab2" role="button">
+            <label for="tab2" role="button"  v-on:click="changeSection('translate')">
                 <font-awesome-icon icon="language"></font-awesome-icon>
             </label>
         </li>
-        <li title="Oxford Dictionaries">
+        <li title="Oxford Dictionaries"  v-on:click="changeSection('dictionaries')">
             <label for="tab3" role="button">
                 <font-awesome-icon icon="atlas"></font-awesome-icon>
             </label>
         </li>
-        <li title="Your Highlights">
+        <li title="Your Highlights"  v-on:click="changeSection('highlighter')">
             <label for="tab4" role="button">
               <font-awesome-icon icon="highlighter"></font-awesome-icon>
             </label>
@@ -42,13 +42,15 @@
         <section id="wikipedia-section">
             <iframe :src="fetchConfig.wikipediaFetchUrl" frameborder="0"></iframe>
         </section>
-        <section></section>
+        <section>
+          <translate-widget></translate-widget>
+        </section>
         <section></section>
         <section></section>
     </div>
   </div>
   <div class="footer">
-    <log v-bind:header="currentSelectedText" v-bind:wikiResultsList="fetchConfig.wikipediaResultsList" v-on:wikipedia-fetch-result="setWikipediaUrlByTitle($event)"></log>
+    <log v-if="currentSection === 'wiki'" v-bind:header="currentSelectedText" v-bind:wikiResultsList="fetchConfig.wikipediaResultsList" v-on:wikipedia-fetch-result="setWikipediaUrlByTitle($event)"></log>
   </div>
 </div>
 
