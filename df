@@ -1,0 +1,29 @@
+[33mcommit d1654127d55dd1cc27a3bbe71311c70cd26c7fb1[m[33m ([m[1;36mHEAD -> [m[1;32mvuejs[m[33m, [m[1;31morigin/vuejs[m[33m)[m
+Author: Dinh Quang Bui <buiquangdinh1751@gmail.com>
+Date:   Fri Dec 18 21:37:17 2020 -0500
+
+    Added translate
+
+[33mcommit 0c67d6e5e68a40fc1f8b920fd3e57e6d1721b912[m
+Author: Dinh Quang Bui <buiquangdinh1751@gmail.com>
+Date:   Fri Dec 18 16:20:54 2020 -0500
+
+    Added something cool
+
+[33mcommit 6e468f7ea7eab391e68896ecceb5af979c396a0f[m
+Author: Dinh Quang Bui <buiquangdinh1751@gmail.com>
+Date:   Fri Dec 18 14:22:02 2020 -0500
+
+    Added wikipedia section
+
+[33mcommit bfd9154b33e4f018725b467913be4e56e912749d[m[33m ([m[1;32mmaster[m[33m)[m
+Author: Dinh Quang Bui <buiquangdinh1751@gmail.com>
+Date:   Thu Dec 17 19:57:24 2020 -0500
+
+    Vuejs initial commit
+
+[33mcommit 5027ec832f5d7b4f2b35d0fb71bb901cd8dcd59c[m
+Author: Dinh Quang Bui <buiquangdinh1751@gmail.com>
+Date:   Thu Dec 17 12:45:20 2020 -0500
+
+    init
