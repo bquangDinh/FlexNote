@@ -10,7 +10,7 @@ export default {
   props: [],
   data () {
     return {
-      isShowing: false,
+      isShowing: true,
       position: {
         x1: 0, // current left
         y1: 0, // current top
@@ -65,8 +65,9 @@ export default {
         }
       }
     },
-    setCurrentSelectedText: function(currentSelectedText){
-      this.currentSelectedText = currentSelectedText
+    setCurrentSelectedText: function(_currentSelectedText){
+      //this.$set(this, this.currentSelectedText, _currentSelectedText.trim());
+      this.currentSelectedText = _currentSelectedText.trim();
     },
     mouseup: function(e){
       this.isDragging = false;
@@ -107,10 +108,8 @@ export default {
 
       return responseUrl;
     },
-    setFetchConfig: async function(selectedText){
-      selectedText = selectedText.trim();
-      this.currentSelectedText = selectedText;
-      this.fetchConfig.wikipediaFetchUrl = await this.fetchWikiByTerm(selectedText);
+    setFetchConfig: async function(){
+      this.fetchConfig.wikipediaFetchUrl = await this.fetchWikiByTerm(this.currentSelectedText);
     },
     setWikipediaUrlByTitle: async function(titleObj){
       let title = titleObj.name.trim().replace(' ', '_');

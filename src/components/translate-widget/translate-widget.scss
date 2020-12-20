@@ -11,9 +11,12 @@
         padding: 10px;
     }
 
-    .controller{
+    .title-controller{
         &{
-            margin: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0 10px 0 4px;
         }
 
         button{
@@ -26,10 +29,24 @@
         }
 
         button:hover,
-        button:focus,
-        button:active{
+        button:focus{
             outline: 0;
             background-color: darken(#3498db, 20%);
         }
+    }
+
+    .exceed-words-limit-warning{
+        &{
+            margin: 0 10px 10px 10px;
+        }
+
+        h3{
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    }
+    
+    .warningspan{
+        color: #e74c3c;
     }
 }

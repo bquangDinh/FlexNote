@@ -1,18 +1,32 @@
 <div class="translate-widget">
   <div class="group first-language">
     <h4>Choose your first language</h4>
-    <custom-select :options="languageOptions" :defaultOption="languageOptions['en']" v-on:output="firstLanguage = $event.key; debounceTranslate()"></custom-select>
+    <custom-select :options="languageOptions" :defaultOption="firstLanguage" v-on:output="firstLanguage = $event; debounceTranslate()"></custom-select>
     <textarea id="firstlanguage-input" class="textarea-input" tabindex="0" autofocus v-model="firstLanguageInput" @keyup="debounceTranslate"></textarea>
+    <span style="float: right; margin-right: 15px" v-bind:class="{ warningspan : firstLanguageInput.length >= EXCEED_WORDS_LIMIT }">{{ firstLanguageInput.length }} / {{ EXCEED_WORDS_LIMIT }}</span>
+    <div style="clear: both"></div>
   </div>
   <div class="group target-language">
-    <h4>Choose a target language</h4>
-    <custom-select :options="languageOptions" :defaultOption="languageOptions['vi']" v-on:output="targetLanguage = $event.key; debounceTranslate()"></custom-select>
+    <div class="title-controller">
+      <h4>Choose a target language</h4>
+      <button v-on:click="revertTranslate">Revert</button>
+    </div>
+    <custom-select :options="languageOptions" :defaultOption="targetLanguage" v-on:output="targetLanguage = $event; debounceTranslate()"></custom-select>
     <div class="textarea-input">
       {{ targetLanguageOutput }}
     </div>
   </div>
-  <div class="controller">
-    <button>Revert</button>
+  <div class="exceed-words-limit-warning" v-if="showExceedWarning">
+    <h3>Exceed words limit !</h3>
+    <p>
+      I'm using Google Translation API is a paid service to prevent poor results reaching you, 
+      meanwhile, 
+      to bring to you the most convenient way to use this addon, 
+      it's free. So I have to reduce as much cost as possible to 
+      keep this addon running. 
+      To translate more-than-{{ EXCEED_WORDS_LIMIT }}-characters sentence, 
+      please using the <a target="_blank" :href="`https://translate.google.com/?sl=${firstLanguage.key}&tl=${targetLanguage.key}&text=${firstLanguageInput}&op=translate`">Google Translate website</a>. Thank you.
+    </p>
   </div>
 </div>
 

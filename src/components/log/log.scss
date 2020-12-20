@@ -64,6 +64,8 @@
         margin: 10px;
         margin-top: 5px;
         padding: 10px;
+        overflow: hidden;
+        white-space: nowrap;
         text-overflow: ellipsis;
         background-color: #ecf0f1;
         border-radius: 5px;

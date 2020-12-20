@@ -12,6 +12,16 @@ export default {
       default: {}
     }
   },
+  watch: {
+    defaultOption: {
+      immediate: true,
+      handler (val, oldVal){
+        if(typeof val !== 'undefined' && val !== oldVal){
+          this.currentSelected = val;
+        }
+      }
+    }
+  },
   data () {
     return {
       currentSelected: this.defaultOption,

@@ -1,5 +1,8 @@
 import Vue from 'vue'
+import wrap from '@vue/web-component-wrapper';
+
 import NotePad from '../components/notepad/index.vue';
+
 import SelectionMenu from 'selection-menu';
 
 /*FontAwesome*/
@@ -26,52 +29,9 @@ var generateID = function(){
 
 /*Create app root for Vuejs*/
 /*This is where the Vuejs app live*/
-var appContainer = document.createElement("div")
-document.body.insertBefore(appContainer, document.body.firstChild);
+const NotepadWrappedElement = wrap(Vue, NotePad);
+customElements.define('flex-note-component', NotepadWrappedElement);
 
-/*Initialize all instance once, and then reuse them*/
-
-var NotePadInstance = (function(){
-    var instance = null;
-
-    return {
-        initialize: function(){
-            if(!instance || instance === null || typeof instance === 'undefined'){
-                let componentClass = Vue.extend(NotePad);
-
-                let _instance = new componentClass();
-                _instance.$mount();
-                appContainer.appendChild(_instance.$el);
-                
-                instance = _instance;
-            }
-
-            return instance;
-        },
-        getInstance: function(){
-            return (!instance || instance === null || typeof instance === 'undefined')
-            ? this.initialize() : instance;
-        }
-    }
-})();
-
-var notepad = NotePadInstance.getInstance();
-
-var uniqueID = generateID();
-var buttonTemplate = `
-    <button id="flexnote-btn-${uniqueID}">FlexNote</button>
-`;
-
-var selectionMenu = new SelectionMenu({
-    container: document.body,
-    content: buttonTemplate,
-    handler: function(e){
-        notepad.show();
-        notepad.setCurrentSelectedText(this.selectedText);
-        notepad.setFetchConfig(this.selectedText);
-        this.hide(true);
-    },
-    onselect: function(e){
-        console.log(this.selectedText);
-    }
-});
+var flexnote = document.createElement('flex-note-component')
+document.body.insertBefore(flexnote, document.body.firstChild);
+console.log(NotepadWrappedElement);

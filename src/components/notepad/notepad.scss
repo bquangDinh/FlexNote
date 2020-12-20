@@ -49,7 +49,7 @@ $content-selector: "~ .content > section";
 .notepad {
     &{
         position: fixed;
-        z-index: 9999;
+        z-index: 99999999;
         width: 40%;
         height: 90%;
         background-color: white;
