@@ -12,8 +12,11 @@
     "@fortawesome/free-brands-svg-icons": "^5.15.1",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/vue-fontawesome": "^2.0.2",
+    "@google-cloud/translate": "^6.0.5",
+    "configstore": "^5.0.1",
     "core-js": "^3.6.5",
-    "google-translate-api": "^2.3.0",
+    "debounce": "^1.2.0",
+    "dotenv": "^8.2.0",
     "selection-menu": "^3.4.2",
     "tether": "^1.4.7",
     "vue": "^2.6.11"

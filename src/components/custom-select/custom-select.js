@@ -27,8 +27,10 @@ export default {
   methods: {
     selectOption: function(item){
       this.active = false;
-      this.currentSelected = item;
-      this.$emit('output', this.currentSelected);
+      if(this.currentSelected.key !== item.key){
+        this.currentSelected = item;
+        this.$emit('output', this.currentSelected);
+      }
     },
     showSelect: function(){
       this.active = true;

@@ -1,4 +1,8 @@
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
+const dotenv = require('dotenv').config({
+  path: path.join(__dirname, '/.env')
+});
 
 module.exports = {
   configureWebpack: {
@@ -7,6 +11,9 @@ module.exports = {
         tether: 'tether',
         Tether: 'tether',
         'window.Tether': 'tether'
+      }),
+      new webpack.DefinePlugin({
+        "process.env.TRANSLATION_API_KEY": JSON.stringify(process.env.TRANSLATION_API_KEY)
       })
     ]
   },

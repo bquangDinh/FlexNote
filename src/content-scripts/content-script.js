@@ -67,6 +67,7 @@ var selectionMenu = new SelectionMenu({
     content: buttonTemplate,
     handler: function(e){
         notepad.show();
+        notepad.setCurrentSelectedText(this.selectedText);
         notepad.setFetchConfig(this.selectedText);
         this.hide(true);
     },

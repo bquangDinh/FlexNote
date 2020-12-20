@@ -65,6 +65,9 @@ export default {
         }
       }
     },
+    setCurrentSelectedText: function(currentSelectedText){
+      this.currentSelectedText = currentSelectedText
+    },
     mouseup: function(e){
       this.isDragging = false;
     },

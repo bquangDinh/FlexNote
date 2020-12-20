@@ -1,15 +1,15 @@
 <div class="translate-widget">
   <div class="group first-language">
     <h4>Choose your first language</h4>
-    <custom-select :options="languageOptions" :defaultOption="languageOptions['en']" v-on:output="firstLanguage = $event"></custom-select>
-    <textarea id="firstlanguage-input" class="textarea-input" v-model="firstLanguageInput" tabindex="0" autofocus v-model.lazy="firstLanguageInput" @keyup="doTranslate"></textarea>
+    <custom-select :options="languageOptions" :defaultOption="languageOptions['en']" v-on:output="firstLanguage = $event.key; debounceTranslate()"></custom-select>
+    <textarea id="firstlanguage-input" class="textarea-input" tabindex="0" autofocus v-model="firstLanguageInput" @keyup="debounceTranslate"></textarea>
   </div>
   <div class="group target-language">
     <h4>Choose a target language</h4>
-    <custom-select :options="languageOptions" :defaultOption="languageOptions['auto']" v-on:output="targetLanguage = $event"></custom-select>
-    <textarea id="targetLanguage-input" class="textarea-input" v-model="targetLanguageInput" tabindex="1" readonly>
+    <custom-select :options="languageOptions" :defaultOption="languageOptions['vi']" v-on:output="targetLanguage = $event.key; debounceTranslate()"></custom-select>
+    <div class="textarea-input">
       {{ targetLanguageOutput }}
-    </textarea>
+    </div>
   </div>
   <div class="controller">
     <button>Revert</button>
