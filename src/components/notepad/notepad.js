@@ -10,11 +10,24 @@ export default {
   props: {
     activateNotePad: {
       type: Boolean
+    },
+    highlightedText: {
+      type: String,
+      default: ''
+    }
+  },
+  watch: {
+    highlightedText: {
+      immediate: true,
+      handler (val, oldVal){
+        console.log(val, oldVal);
+        this.currentSelectedText = val;
+        this.setFetchConfig();
+      }
     }
   },
   data () {
     return {
-      isShowing: this.activateNotePad,
       position: {
         x1: 0, // current left
         y1: 0, // current top
@@ -27,7 +40,7 @@ export default {
         wikipediaFetchUrl: "https://en.wikipedia.org/wiki/Main_Page",
         wikipediaResultsList: []
       },
-      currentSelectedText: '',
+      currentSelectedText: this.highlightedText,
       currentSection: 'wiki'
     }
   },
@@ -38,14 +51,6 @@ export default {
 
   },
   methods: {
-    show: function(){
-      //TODO: reset position if the notepad outsider viewport
-      //this.styleObject = { top: '20px', left: '55vw' };
-      this.isShowing = true;
-    },
-    hide: function(){
-      this.isShowing = false
-    },
     changeSection: function(sectioName){
       this.currentSection = sectioName;
     },
@@ -68,10 +73,6 @@ export default {
           left: (e.target.getBoundingClientRect().left - this.position.x1) + 'px'
         }
       }
-    },
-    setCurrentSelectedText: function(_currentSelectedText){
-      //this.$set(this, this.currentSelectedText, _currentSelectedText.trim());
-      this.currentSelectedText = _currentSelectedText.trim();
     },
     mouseup: function(e){
       this.isDragging = false;

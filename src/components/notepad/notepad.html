@@ -1,4 +1,4 @@
-<div :class="$style.notepad" v-bind:style="styleObject" v-if="isShowing">
+<div :class="$style.notepad" v-bind:style="styleObject" v-if="activateNotePad">
   <div v-bind:class="[$style.draggable_header, isDragging ? $style.dragging : '']" v-if="isShowing" @mousedown="mousedown" @mousemove="mousemove" @mouseup="mouseup"></div>
   <button v-bind:id="$style.close_button" v-on:click="closeNotePad">
     <font-awesome-icon icon="times"></font-awesome-icon>
@@ -50,7 +50,7 @@
     </div>
   </div>
   <div :class="$style.footer">
-    <log v-if="currentSection === 'wiki'" v-bind:header="currentSelectedText" v-bind:wikiResultsList="fetchConfig.wikipediaResultsList" v-on:wikipedia-fetch-result="setWikipediaUrlByTitle($event)"></log>
+    <log v-if="currentSection === 'wiki'" v-bind:header="highlightedText" v-bind:wikiResultsList="fetchConfig.wikipediaResultsList" v-on:wikipedia-fetch-result="setWikipediaUrlByTitle($event)"></log>
   </div>
 </div>
 

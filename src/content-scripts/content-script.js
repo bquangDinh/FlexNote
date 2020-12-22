@@ -48,7 +48,8 @@ var app = new Vue({
     el: holder,
     data: function(){
         return {
-            showNotePad: false
+            showNotePad: false,
+            highlightedText: ''
         }
     },
     methods: {
@@ -57,13 +58,18 @@ var app = new Vue({
         },
         hideNotePad: function(){
             this.showNotePad = false;
+        },
+        setHighlightedText: function(text){
+            console.log('changed text');
+            this.highlightedText = text.trim();
         }
     },
     render: function(createElement){
         var that = this;
         return createElement(NotePad, {
             props: {
-                activateNotePad : true
+                activateNotePad : that.showNotePad,
+                highlightedText: that.highlightedText
             }
         })
     }
@@ -79,6 +85,7 @@ var selectionMenu = new SelectionMenu({
     content: buttonTemplate,
     handler: function(e){
         app.runNotePad();
+        app.setHighlightedText(this.selectedText);
         this.hide(true);
     },
     onselect: function(e){
