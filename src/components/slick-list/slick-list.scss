@@ -1,6 +1,6 @@
 $item-btn-color: #ecf0f1;
 
-.slick-list {
+.slick_list {
     &{
         overflow: hidden;
     }
@@ -14,7 +14,7 @@ $item-btn-color: #ecf0f1;
             align-items: center;
         }
 
-        #keep-original-checkbox-lb{
+        #keep_original_checkbox_lb{
             margin-right: 25px;
         }
     }
@@ -30,7 +30,7 @@ $item-btn-color: #ecf0f1;
             margin-right: 25px;
         }
 
-        .item-btn{
+        .item_btn{
             background-color: $item-btn-color;
             border-radius: 5px;
             border: 0;

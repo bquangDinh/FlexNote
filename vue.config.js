@@ -39,9 +39,31 @@ function enableShadowCss(config) {
   }));
 }
 
+function changeSCSSConfigs(config){
+  const configs = [
+    config.module.rule('scss').oneOf('vue-modules'),
+    config.module.rule('scss').oneOf('vue'),
+    config.module.rule('scss').oneOf('normal-modules'),
+    config.module.rule('scss').oneOf('normal'),
+  ];
+
+  configs.forEach(function(c){
+    c.uses.clear();
+    c.use('style-loader').loader('style-loader');
+    c.use('style-loader').options({
+      insert: require('./css-loader-shim')
+    });
+    c.use('css-loader').loader('css-loader');
+    c.use('css-loader').options({
+      modules: true
+    });
+    c.use('sass-loader').loader('sass-loader');
+  });
+}
+
 module.exports = {
   chainWebpack: config => {
-    enableShadowCss(config);
+    changeSCSSConfigs(config);
   },
   configureWebpack: {
     plugins: [
@@ -71,7 +93,7 @@ module.exports = {
         contentScripts: {
           entries: {
             'content-script': [
-              'node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js',
+              //'node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js',
               'src/content-scripts/content-script.js',
             ]
           }

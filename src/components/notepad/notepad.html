@@ -1,32 +1,32 @@
-<div class="notepad" v-bind:style="styleObject" v-if="isShowing">
-  <div class="draggable-header" v-bind:class="{ dragging: isDragging }" v-if="isShowing" @mousedown="mousedown" @mousemove="mousemove" @mouseup="mouseup"></div>
-  <button id="close-button" v-on:click="closeNotePad">
+<div :class="$style.notepad" v-bind:style="styleObject" v-if="isShowing">
+  <div v-bind:class="[$style.draggable_header, isDragging ? $style.dragging : '']" v-if="isShowing" @mousedown="mousedown" @mousemove="mousemove" @mouseup="mouseup"></div>
+  <button v-bind:id="$style.close_button" v-on:click="closeNotePad">
     <font-awesome-icon icon="times"></font-awesome-icon>
   </button>
-  <div class="tabs">
-    <input type="radio" id="tab1" name="tab-control" checked>
-    <input type="radio" id="tab2" name="tab-control">
-    <input type="radio" id="tab3" name="tab-control">
-    <input type="radio" id="tab4" name="tab-control">
+  <div :class="$style.tabs">
+    <input type="radio" :id="$style.tab1" name="tab-control" checked>
+    <input type="radio" :id="$style.tab2" name="tab-control">
+    <input type="radio" :id="$style.tab3" name="tab-control">
+    <input type="radio" :id="$style.tab4" name="tab-control">
 
     <ul>
         <li title="Wikipedia">
-            <label for="tab1" role="button" v-on:click="changeSection('wiki')">
+            <label :for="$style.tab1" role="button" v-on:click="changeSection('wiki')">
                 <font-awesome-icon :icon="['fab', 'wikipedia-w']"></font-awesome-icon>
             </label>
         </li>
         <li title="Translate">
-            <label for="tab2" role="button"  v-on:click="changeSection('translate')">
+            <label :for="$style.tab2" role="button"  v-on:click="changeSection('translate')">
                 <font-awesome-icon icon="language"></font-awesome-icon>
             </label>
         </li>
         <li title="Oxford Dictionaries"  v-on:click="changeSection('dictionaries')">
-            <label for="tab3" role="button">
+            <label :for="$style.tab3" role="button">
                 <font-awesome-icon icon="atlas"></font-awesome-icon>
             </label>
         </li>
         <li title="Your Highlights"  v-on:click="changeSection('highlighter')">
-            <label for="tab4" role="button">
+            <label :for="$style.tab4" role="button">
               <font-awesome-icon icon="highlighter"></font-awesome-icon>
             </label>
         </li>
@@ -38,8 +38,8 @@
     </div>
   -->
 
-    <div class="content">
-        <section id="wikipedia-section">
+    <div :class="$style.content">
+        <section :id="$style.wikipedia_section">
             <iframe :src="fetchConfig.wikipediaFetchUrl" frameborder="0"></iframe>
         </section>
         <section>
@@ -49,7 +49,7 @@
         <section></section>
     </div>
   </div>
-  <div class="footer">
+  <div :class="$style.footer">
     <log v-if="currentSection === 'wiki'" v-bind:header="currentSelectedText" v-bind:wikiResultsList="fetchConfig.wikipediaResultsList" v-on:wikipedia-fetch-result="setWikipediaUrlByTitle($event)"></log>
   </div>
 </div>

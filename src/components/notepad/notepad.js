@@ -7,10 +7,14 @@ export default {
     Log,
     TranslateWidget
   },
-  props: [],
+  props: {
+    activateNotePad: {
+      type: Boolean
+    }
+  },
   data () {
     return {
-      isShowing: true,
+      isShowing: this.activateNotePad,
       position: {
         x1: 0, // current left
         y1: 0, // current top

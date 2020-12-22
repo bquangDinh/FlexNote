@@ -29,9 +29,59 @@ var generateID = function(){
 
 /*Create app root for Vuejs*/
 /*This is where the Vuejs app live*/
-const NotepadWrappedElement = wrap(Vue, NotePad);
-customElements.define('flex-note-component', NotepadWrappedElement);
+var appID = 'flex-note' + generateID();
 
-var flexnote = document.createElement('flex-note-component')
-document.body.insertBefore(flexnote, document.body.firstChild);
-console.log(NotepadWrappedElement);
+var treeHead = document.createElement('div');
+treeHead.id = appID;
+document.body.insertBefore(treeHead, document.body.firstChild);
+
+var parent = document.createElement('div');
+var holder = document.createElement('div');
+var shadow = treeHead.attachShadow({ mode: 'open' });
+
+foo.loadStyles(parent);
+
+parent.appendChild(holder);
+shadow.appendChild(parent);
+
+var app = new Vue({
+    el: holder,
+    data: function(){
+        return {
+            showNotePad: false
+        }
+    },
+    methods: {
+        runNotePad: function(){
+            this.showNotePad = true;
+        },
+        hideNotePad: function(){
+            this.showNotePad = false;
+        }
+    },
+    render: function(createElement){
+        var that = this;
+        return createElement(NotePad, {
+            props: {
+                activateNotePad : true
+            }
+        })
+    }
+});
+
+var uniqueID = generateID();
+var buttonTemplate = `
+    <button id="flexnote-btn-${uniqueID}">FlexNote</button>
+`;
+
+var selectionMenu = new SelectionMenu({
+    container: document.body,
+    content: buttonTemplate,
+    handler: function(e){
+        app.runNotePad();
+        this.hide(true);
+    },
+    onselect: function(e){
+        console.log(this.selectedText);
+    }
+});
