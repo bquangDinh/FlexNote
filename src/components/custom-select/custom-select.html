@@ -1,10 +1,10 @@
-<div class="custom-select" @blur="active = false" tabindex="0">
-  <div class="select-selected" @click="active = !active">
+<div :class="$style.custom_select" @blur="active = false" tabindex="0">
+  <div :class="$style.select_selected" @click="active = !active">
     {{ currentSelected.label }}
   </div>
 
-  <div class="options" v-if="active">
-    <div class="option" v-for="option in options" :class="{ selected : option.key === currentSelected.key }" v-on:click="selectOption(option)">
+  <div :class="$style.options" v-if="active">
+    <div v-for="option in options" :class="[ $style.option, option.key === currentSelected.key ? $style.selected : '']" v-on:click="selectOption(option)">
       {{ option.label }}
     </div>
   </div>

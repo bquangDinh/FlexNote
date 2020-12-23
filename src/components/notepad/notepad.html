@@ -1,5 +1,5 @@
 <div :class="$style.notepad" v-bind:style="styleObject" v-if="activateNotePad">
-  <div v-bind:class="[$style.draggable_header, isDragging ? $style.dragging : '']" v-if="isShowing" @mousedown="mousedown" @mousemove="mousemove" @mouseup="mouseup"></div>
+  <div v-bind:class="[$style.draggable_header, isDragging ? $style.dragging : '']" @mousedown="mousedown" @mousemove="mousemove" @mouseup="mouseup"></div>
   <button v-bind:id="$style.close_button" v-on:click="closeNotePad">
     <font-awesome-icon icon="times"></font-awesome-icon>
   </button>

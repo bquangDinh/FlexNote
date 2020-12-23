@@ -78,7 +78,6 @@ $content-selector: "~ .content > section";
         border-radius: 50%;
         border: 0;
         color: white;
-        font-size: 1.2rem;
         cursor: pointer;
         z-index: 999;
 
@@ -86,6 +85,11 @@ $content-selector: "~ .content > section";
         &:focus{
             outline: 0;
             background-color: darken($color: #e74c3c, $amount: 20%)
+        }
+
+        svg{
+            height: 20px;
+            width: 20px;
         }
     }
 
@@ -146,7 +150,7 @@ $content-selector: "~ .content > section";
 
         ul{
             &{
-                flex: 0 0 40px;
+                flex: 0 0 10px;
                 list-style-type: none;
                 padding-left: 0;
                 display: flex;
@@ -179,6 +183,11 @@ $content-selector: "~ .content > section";
                         -webkit-touch-callout: none;
                         text-align: center;
                         //@include user-select(none);
+
+                        svg{
+                            height: 30px;
+                            width: auto;
+                        }
                     }
 
                     &:hover,

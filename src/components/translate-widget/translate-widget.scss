@@ -1,5 +1,5 @@
-.translate-widget {
-    .textarea-input{
+.translate_widget {
+    .textarea_input{
         box-sizing: border-box;
         border-radius: 5px;
         width: calc(100% - 20px);
@@ -11,7 +11,7 @@
         padding: 10px;
     }
 
-    .title-controller{
+    .title_controller{
         &{
             display: flex;
             justify-content: space-between;
@@ -35,7 +35,7 @@
         }
     }
 
-    .exceed-words-limit-warning{
+    .exceed_words_limit_warning{
         &{
             margin: 0 10px 10px 10px;
         }

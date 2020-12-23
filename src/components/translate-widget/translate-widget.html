@@ -1,22 +1,22 @@
-<div class="translate-widget">
+<div :class="$style.translate_widget">
   <div class="group first-language">
     <h4>Choose your first language</h4>
     <custom-select :options="languageOptions" :defaultOption="firstLanguage" v-on:output="firstLanguage = $event; debounceTranslate()"></custom-select>
-    <textarea id="firstlanguage-input" class="textarea-input" tabindex="0" autofocus v-model="firstLanguageInput" @keyup="debounceTranslate"></textarea>
-    <span style="float: right; margin-right: 15px" v-bind:class="{ warningspan : firstLanguageInput.length >= EXCEED_WORDS_LIMIT }">{{ firstLanguageInput.length }} / {{ EXCEED_WORDS_LIMIT }}</span>
+    <textarea :id="$style.firstlanguage_input" :class="$style.textarea_input" tabindex="0" autofocus v-model="firstLanguageInput" @keyup="debounceTranslate"></textarea>
+    <span style="float: right; margin-right: 15px" :class="{ [$style.warningspan] : firstLanguageInput.length >= EXCEED_WORDS_LIMIT }">{{ firstLanguageInput.length }} / {{ EXCEED_WORDS_LIMIT }}</span>
     <div style="clear: both"></div>
   </div>
   <div class="group target-language">
-    <div class="title-controller">
+    <div :class="$style.title_controller">
       <h4>Choose a target language</h4>
       <button v-on:click="revertTranslate">Revert</button>
     </div>
     <custom-select :options="languageOptions" :defaultOption="targetLanguage" v-on:output="targetLanguage = $event; debounceTranslate()"></custom-select>
-    <div class="textarea-input">
+    <div :class="$style.textarea_input">
       {{ targetLanguageOutput }}
     </div>
   </div>
-  <div class="exceed-words-limit-warning" v-if="showExceedWarning">
+  <div :class="$style.exceed_words_limit_warning" v-if="showExceedWarning">
     <h3>Exceed words limit !</h3>
     <p>
       I'm using Google Translation API is a paid service to prevent poor results reaching you, 
