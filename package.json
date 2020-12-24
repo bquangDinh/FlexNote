@@ -17,11 +17,13 @@
     "configstore": "^5.0.1",
     "core-js": "^3.6.5",
     "debounce": "^1.2.0",
+    "debounce-promise": "^3.1.2",
     "dotenv": "^8.2.0",
     "fibers": "^5.0.0",
     "selection-menu": "^3.4.2",
     "tether": "^1.4.7",
     "vue": "^2.6.11",
+    "vue-async-computed": "^3.9.0",
     "vue-shadow-dom": "^2.0.0"
   },
   "devDependencies": {

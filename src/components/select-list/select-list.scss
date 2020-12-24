@@ -1,0 +1,19 @@
+$item-btn-color: #ecf0f1;
+
+.select_list {
+    .list{
+        &{
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .item_btn{
+            background-color: $item-btn-color;
+            border-radius: 5px;
+            border: 0;
+            margin: 0 5px 0 5px;
+            padding: 5px;
+            cursor: pointer;
+        }
+    }
+}

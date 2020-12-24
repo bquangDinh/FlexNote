@@ -1,47 +1,67 @@
-import Log from '../log/index.vue';
+/*-----Child components-----*/
+import WikipediaWidget from '../wikipedia-widget/index.vue';
 import TranslateWidget from '../translate-widget/index.vue';
 
 export default {
   name: 'notepad',
   components: {
-    Log,
+    WikipediaWidget,
     TranslateWidget
   },
   props: {
-    activateNotePad: {
-      type: Boolean
+    showNotePad: {
+      type: Boolean,
+      default: false,
     },
     highlightedText: {
       type: String,
-      default: ''
-    }
-  },
-  watch: {
-    highlightedText: {
-      immediate: true,
-      handler (val, oldVal){
-        console.log(val, oldVal);
-        this.currentSelectedText = val;
-        this.setFetchConfig();
+      require: true,
+      validator: function(value){
+        return value.trim() !== '';
       }
     }
   },
-  data () {
+  watch: {
+    showNotePad: {
+      immediate: true,
+      handler (val, oldVal){
+        this.isNotePadShowing = val;
+      }
+    },
+    highlightedText: {
+      immediate: true,
+      handler (val, oldVal){
+        if(val !== oldVal){
+          this.oldHighlightedText = oldVal;
+        }
+        console.log(val, oldVal);
+      }
+    },
+  },
+  data: function() {
     return {
-      position: {
-        x1: 0, // current left
-        y1: 0, // current top
-        x2: 0, // last left
-        y2: 0, // last top
+      dragging: {
+        position: {
+          last: {
+            x: 0,
+            y: 0,
+          },
+          current: {
+            x: 0,
+            y: 0
+          }
+        },
+        isDragging: false
       },
-      styleObject: { top: '20px', left: '55vw' },
-      isDragging: false,
-      fetchConfig: {
-        wikipediaFetchUrl: "https://en.wikipedia.org/wiki/Main_Page",
-        wikipediaResultsList: []
+      styleObject: {
+        top: '20px',
+        left: '55vw'
       },
-      currentSelectedText: this.highlightedText,
-      currentSection: 'wiki'
+      isNotePadShowing: this.showNotePad,
+      currentSection: 'wiki',
+      shouldTranslate: false,
+      oldHighlightedText: this.highlightedText,
+      notTheFirstTime: false
     }
   },
   computed: {
@@ -51,86 +71,70 @@ export default {
 
   },
   methods: {
-    changeSection: function(sectioName){
-      this.currentSection = sectioName;
-    },
+    /*Dragging Events*/
     mousedown: function(e){
-      this.isDragging = true;
-      this.position.x2 = e.clientX;
-      this.position.y2 = e.clientY;
+      this.dragging.isDragging = true;
+      this.dragging.position.last = {
+        x: e.clientX,
+        y: e.clientY
+      };
     },
     mousemove: function(e){
-      if(this.isDragging){
-        this.position.x1 = this.position.x2 - e.clientX;
-        this.position.y1 = this.position.y2 - e.clientY;
+      if(this.dragging.isDragging){
+        this.dragging.position.current = {
+          x: this.dragging.position.last.x - e.clientX,
+          y: this.dragging.position.last.y - e.clientY
+        };
 
-        this.position.x2 = e.clientX;
-        this.position.y2 = e.clientY;
+        this.dragging.position.last = {
+          x: e.clientX,
+          y: e.clientY
+        };
 
-        //update style object
         this.styleObject = {
-          top: (e.target.getBoundingClientRect().top - this.position.y1) + 'px',
-          left: (e.target.getBoundingClientRect().left - this.position.x1) + 'px'
+          top: 
+          (e.target.getBoundingClientRect().top 
+          - this.dragging.position.current.y) + 'px',
+          left: 
+          (e.target.getBoundingClientRect().left 
+          - this.dragging.position.current.x) + 'px'
         }
       }
     },
     mouseup: function(e){
-      this.isDragging = false;
+      this.dragging.isDragging = false;
     },
-    fetchWikiByTerm: async function(term){
-      var that = this;
+    /*Button Events*/
+    changeSection: function(sectionName){
+      this.currentSection = sectionName;
+      
+      //show change once
+      if(this.currentSection !== 'wiki' && this.notTheFirstTime == false){
+        this.notTheFirstTime = true;
+      }
 
-      let params = {
-        action: 'query',
-        list: 'search',
-        srsearch: term,
-        format: 'json'
-      };
-      let responseUrl = '';
-      let apiUrl = "https://en.wikipedia.org/w/api.php"; 
-      let wikiUrl = "https://en.wikipedia.org/wiki/";
+      //user head to translate widget
+      if(sectionName === 'translate'){
+        //check if this is the first time
+        if(this.notTheFirstTime === false){
+          this.shouldTranslate = true;
 
-      let completeApiUrl = apiUrl + "?origin=*";
-
-      Object.keys(params).forEach(function(key){
-        completeApiUrl += '&' + key + '=' + params[key];
-      });
-
-      await fetch(completeApiUrl)
-      .then(function(response) { return response.json() })
-      .then(function(response) {
-        if(response.query.search.length > 0){
-          responseUrl = wikiUrl + response.query.search[0].title;
-          console.log(response.query.search);
-          if(response.query.search.length > 5){
-            that.fetchConfig.wikipediaResultsList = response.query.search.slice(1, 6).map(item => item.title);
+          //disable this option
+          this.notTheFirstTime = true;
+        }else{
+          //means this is the second time
+          if(this.highlightedText !== this.oldHighlightedText){
+            this.shouldTranslate = true;
+            this.oldHighlightedText = this.highlightedText;
           }else{
-            that.fetchConfig.wikipediaResultsList = response.query.search.map(item => item.title);
+            this.shouldTranslate = false;
           }
-        }      
-      })
-      .catch(function(error) { console.error(error) });
-
-      return responseUrl;
-    },
-    setFetchConfig: async function(){
-      this.fetchConfig.wikipediaFetchUrl = await this.fetchWikiByTerm(this.currentSelectedText);
-    },
-    setWikipediaUrlByTitle: async function(titleObj){
-      let title = titleObj.name.trim().replace(' ', '_');
-      let url = '';
-      this.currentSelectedText = title;
-
-      if(titleObj.keepOriginal){
-        let wikiUrl = "https://en.wikipedia.org/wiki/";
-        url = wikiUrl + title;
-        this.fetchConfig.wikipediaFetchUrl = url;
-      }else{
-        this.fetchConfig.wikipediaFetchUrl = await this.fetchWikiByTerm(title);
+        }
       }
     },
-    closeNotePad: function(){
-      this.hide();
+    closeNotePad: function(e){
+      this.isNotePadShowing = false;
+      this.$emit('notepad-close');
     }
   }
 }

@@ -1,0 +1,8 @@
+<div :class="$style.select_list">
+  <div :class="$style.list">
+    <button :class="$style.item_btn" v-for="item in items" @click="select(item)">
+      {{ item }}
+    </button>
+  </div>
+</div>
+

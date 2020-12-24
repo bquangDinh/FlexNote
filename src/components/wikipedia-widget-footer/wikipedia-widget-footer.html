@@ -1,0 +1,41 @@
+<div :class="$style.log">
+  <button :class="$style.hide_log_btn" @click="isShowing = !isShowing">
+    <font-awesome-icon icon="eye-slash" v-if="isShowing == true" key="icon-showing"></font-awesome-icon>
+    <font-awesome-icon icon="external-link-alt" v-else key="icon-showing"></font-awesome-icon>
+  </button>
+  <div :class="[$style.log_container, !isShowing ? $style.hide : '']">
+    <div :class="$style.log_header">
+      <span>
+        Selected text
+      </span>
+      <div :class="$style.word_count">
+        Words count: <span>{{ wordLength }}</span>
+      </div>
+    </div>
+    <div :class="$style.selected_text">
+      {{ highlightedText }}
+    </div>
+    <div :class="$style.main">
+      <div :class="$style.select_section">
+        <div :class="$style.header">
+          Other results from Wikipedia:
+        </div>
+        <label 
+        :for="$style.term_checkbox" 
+        :id="$style.term_checkbox_label"
+        >
+          <input 
+          type="checkbox" 
+          :id="$style.term_checkbox" 
+          v-model="originalResultsInput"
+          @change="$emit('update:originalResultsInput', originalResultsInput)"
+          >
+          Keep the original results
+        </label>  
+      </div>
+  
+      <select-list :items="wikiResultsList" @select-item="sendChoiceToWiki"></select-list>
+    </div>
+  </div>
+</div>
+

@@ -3,12 +3,13 @@ module.exports = function(elem){
 
     import_styles.push(elem);
 
-    window['foo'] = window['foo'] || {};
-    window['foo'].loadStyles = function(el){
+    window['css_loader'] = window['css_loader'] || {};
+    window['css_loader'].loadStyles = function(el){
         import_styles.forEach(style => {
             el.appendChild(style);
         });
 
         //TODO: delete import_styles
+        delete window['import_styles'];
     }
 }

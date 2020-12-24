@@ -73,7 +73,9 @@ module.exports = {
         'window.Tether': 'tether'
       }),
       new webpack.DefinePlugin({
-        "process.env.TRANSLATION_API_KEY": JSON.stringify(process.env.TRANSLATION_API_KEY)
+        "process.env.TRANSLATION_API_KEY": JSON.stringify(process.env.TRANSLATION_API_KEY),
+        "process.env.APP_NAME": JSON.stringify(process.env.APP_NAME),
+        "process.env.APP_DEBUG": JSON.stringify(process.env.APP_DEBUG)
       }),
     ],
   },

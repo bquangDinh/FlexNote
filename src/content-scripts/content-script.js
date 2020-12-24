@@ -1,94 +1,185 @@
-import Vue from 'vue'
-import wrap from '@vue/web-component-wrapper';
+/*-----Vue-----*/
+import Vue from 'vue';
 
+/*-----Vue User-defined components-----*/
+
+/*-----Vue User-defined components > Single instance components-----*/
 import NotePad from '../components/notepad/index.vue';
 
-import SelectionMenu from 'selection-menu';
-
-/*FontAwesome*/
+/*-----Vue third-parties libaries-----*/
+/*-----Vue third-parties libaries > FontAwesome-----*/
 import { library } from '@fortawesome/fontawesome-svg-core';
+
+/*-----FontAwesome Brand Icons-----*/
 import { faWikipediaW } from '@fortawesome/free-brands-svg-icons';
-import { faHighlighter, faLanguage, faAtlas, faTimes, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+
+/*-----FontAwesome Solid Icons-----*/
+import { 
+    faHighlighter, 
+    faLanguage, 
+    faAtlas, 
+    faTimes, 
+    faChevronDown, 
+    faChevronUp, 
+    faExternalLinkAlt,
+    faEyeSlash
+} from '@fortawesome/free-solid-svg-icons';
+
+/*-----FontAwesome Components-----*/
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-/*Add every using icon to library*/
-library.add(faWikipediaW, faLanguage, faAtlas, faHighlighter, faTimes, faChevronDown, faChevronUp);
+/*-----Vue third-parties libaries > vue-async-computed-----*/
+import AsyncComputed from 'vue-async-computed'
 
-//register FontAwesomeIcon component to Vuejs
+/*-----Other libaries-----*/
+import SelectionMenu from 'selection-menu';
+
+/*-----Helper Functions-----*/
+
+/**
+ * Generate an unique ID.
+ * @param  {String} prefix specify a prefix to the ID, default is an empty string 
+ * @return {String} Return an uniue ID as a string
+ */
+function generateID(prefix = ''){
+    return prefix + Math.random().toString(36).substr(2, 9);
+}
+
+/**
+ * @summary Preprocess text format.
+ * @description Use this when setting NotePad's prop. Just to make sure
+ * NotePad component will not have to deal with poor text format
+ * @param {String} text the text which is going to be processed 
+ */
+function preprocessText(text){
+    text = text.trim();
+    return text;
+}
+
+/*-----Main Here-----*/
+/*Initialize every third-parties VueJS libaries*/
+Vue.use(AsyncComputed);
+
+/*Initialize FontAwesome*/
+//Register every using icons to library
+library.add(
+    faWikipediaW, 
+    faLanguage, 
+    faAtlas, 
+    faHighlighter, 
+    faTimes, 
+    faChevronDown, 
+    faChevronUp,
+    faExternalLinkAlt,
+    faEyeSlash
+);
+
+//register FontAwesome Component to VueJS
 Vue.component('font-awesome-icon', FontAwesomeIcon);
+
+//TODO: Explain this line
 Vue.config.productionTip = false;
 
-/*Helper functions*/
+/*Get properties from .env*/
+var APP_NAME = process.env.APP_NAME || 'flex-note';
+var APP_DEBUG = process.env.APP_DEBUG || 'true';
 
-/*Generate an unique ID*/
-var generateID = function(){
-    return '_' + Math.random().toString(36).substr(2, 9);
-};
+/*Generate an app ID*/
+var appID = APP_NAME + generateID('-');
 
-/*---------end helper functions---------*/
-
-/*Create app root for Vuejs*/
-/*This is where the Vuejs app live*/
-var appID = 'flex-note' + generateID();
-
+/*Create app root for VueJS and insert it to DOM*/
 var treeHead = document.createElement('div');
 treeHead.id = appID;
-document.body.insertBefore(treeHead, document.body.firstChild);
 
+/*App will live in the parent DOM*/
 var parent = document.createElement('div');
+
+/*App will be mounted in the holder DOM*/
 var holder = document.createElement('div');
+
+/*Create shadow root for the app*/
 var shadow = treeHead.attachShadow({ mode: 'open' });
 
-foo.loadStyles(parent);
+/*Load styles to shadow root via parent DOM
+ *If we don't do this step, the app will run without any styles
+ *We can actually do it through vue-style-loader, but I've stucked trying to wrap
+ *the notepad components in a wrapper. So we do it manually
+*/
+//TODO: rename foo and load styles
+css_loader.loadStyles(parent);
 
+/*Insert the app into main DOM*/
 parent.appendChild(holder);
 shadow.appendChild(parent);
+document.body.insertBefore(treeHead, document.body.firstChild);
 
-var app = new Vue({
+/*Create the app*/
+var App = new Vue({
     el: holder,
     data: function(){
         return {
-            showNotePad: false,
-            highlightedText: ''
+            userHighlightedText: '',
+            showNotePad: false
         }
     },
     methods: {
-        runNotePad: function(){
+        /**
+         * Show and change the notepad's data via the highlighting text
+         * @param {String} highlightedText the text which the user is highlighting on the web
+         */
+        runNotePad: function(highlightedText = ''){
             this.showNotePad = true;
-        },
-        hideNotePad: function(){
-            this.showNotePad = false;
-        },
-        setHighlightedText: function(text){
-            console.log('changed text');
-            this.highlightedText = text.trim();
+            this.userHighlightedText = highlightedText;
         }
     },
+    mounted: function(){
+        var self = this;
+        this.$refs.myNotePad.$on('notepad-close', function(e){
+            self.showNotePad = false;
+            console.log('Notepad is closed');
+        });
+    },
     render: function(createElement){
-        var that = this;
-        return createElement(NotePad, {
+        var self = this;
+        return createElement(
+            NotePad
+            , {
             props: {
-                activateNotePad : that.showNotePad,
-                highlightedText: that.highlightedText
-            }
+                showNotePad: self.showNotePad,
+                highlightedText: self.userHighlightedText
+            },
+            ref: 'myNotePad',
         })
     }
 });
 
-var uniqueID = generateID();
-var buttonTemplate = `
-    <button id="flexnote-btn-${uniqueID}">FlexNote</button>
+/*Create interactive button*/
+var showNotePadButtonID = APP_NAME + '-btn' + generateID('-');
+var showNotePadButtonTemplate = `
+<button id="${showNotePadButtonID}">FlexNote</button>
 `;
 
-var selectionMenu = new SelectionMenu({
+/*Initialize SelectionMenu*/
+new SelectionMenu({
     container: document.body,
-    content: buttonTemplate,
+    content: showNotePadButtonTemplate,
+    //SelectionMenu will call handler after user click the button
     handler: function(e){
-        app.runNotePad();
-        app.setHighlightedText(this.selectedText);
+        if(APP_DEBUG){
+            console.log('Open Notepad');
+        }
+        
+        let highlightedText = preprocessText(this.selectedText);
+        App.runNotePad(highlightedText);
+
+        //hide the button
         this.hide(true);
     },
+    //SelectionMenu will call this function after user have selected a text on a webpage
+    //Use this for debug only
     onselect: function(e){
-        console.log(this.selectedText);
+        if(APP_DEBUG){
+            console.log('Text is being highlighted: ' + this.selectedText);
+        }
     }
 });

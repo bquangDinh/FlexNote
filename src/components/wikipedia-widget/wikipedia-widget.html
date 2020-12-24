@@ -1,0 +1,15 @@
+<div :class="$style.wikipedia_widget">
+  <iframe 
+  :class="$style.wikipedia_widget" 
+  :src="iframeSrc" 
+  frameborder="0"
+  ></iframe>
+  
+  <wikipedia-widget-footer 
+  :highlighted-text="text" 
+  :wiki-results-list="currentResultsList" 
+  :original-results-input.sync="options.keepOriginalResults"
+  @wikipedia-term-select-output="text = $event"
+  @orignal-results-output="options.keepOriginalResults = $event;"
+  ></wikipedia-widget-footer>
+</div>

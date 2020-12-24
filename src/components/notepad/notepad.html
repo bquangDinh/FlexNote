@@ -1,8 +1,10 @@
-<div :class="$style.notepad" v-bind:style="styleObject" v-if="activateNotePad">
-  <div v-bind:class="[$style.draggable_header, isDragging ? $style.dragging : '']" @mousedown="mousedown" @mousemove="mousemove" @mouseup="mouseup"></div>
-  <button v-bind:id="$style.close_button" v-on:click="closeNotePad">
+<div :class="$style.notepad" :style="styleObject" v-if="isNotePadShowing">
+  <div :class="[$style.draggable_header, dragging.isDragging ? $style.dragging : '']" @mousedown="mousedown" @mousemove="mousemove" @mouseup="mouseup"></div>
+  
+  <button :id="$style.close_button" @click="closeNotePad">
     <font-awesome-icon icon="times"></font-awesome-icon>
   </button>
+
   <div :class="$style.tabs">
     <input type="radio" :id="$style.tab1" name="tab-control" checked>
     <input type="radio" :id="$style.tab2" name="tab-control">
@@ -11,21 +13,21 @@
 
     <ul>
         <li title="Wikipedia">
-            <label :for="$style.tab1" role="button" v-on:click="changeSection('wiki')">
+            <label :for="$style.tab1" role="button" @click="changeSection('wiki')">
                 <font-awesome-icon :icon="['fab', 'wikipedia-w']"></font-awesome-icon>
             </label>
         </li>
         <li title="Translate">
-            <label :for="$style.tab2" role="button"  v-on:click="changeSection('translate')">
+            <label :for="$style.tab2" role="button" @click="changeSection('translate')">
                 <font-awesome-icon icon="language"></font-awesome-icon>
             </label>
         </li>
-        <li title="Oxford Dictionaries"  v-on:click="changeSection('dictionaries')">
+        <li title="Oxford Dictionaries" @click="changeSection('dictionaries')">
             <label :for="$style.tab3" role="button">
                 <font-awesome-icon icon="atlas"></font-awesome-icon>
             </label>
         </li>
-        <li title="Your Highlights"  v-on:click="changeSection('highlighter')">
+        <li title="Your Highlights" @click="changeSection('highlighter')">
             <label :for="$style.tab4" role="button">
               <font-awesome-icon icon="highlighter"></font-awesome-icon>
             </label>
@@ -39,18 +41,18 @@
   -->
 
     <div :class="$style.content">
-        <section :id="$style.wikipedia_section">
-            <iframe :src="fetchConfig.wikipediaFetchUrl" frameborder="0"></iframe>
+        <section>
+            <wikipedia-widget :highlighted-text="highlightedText"></wikipedia-widget>
         </section>
         <section>
-          <translate-widget v-bind:selectedText="currentSelectedText"></translate-widget>
+          <translate-widget 
+          :highlighted-text="highlightedText" 
+          :should-translate="shouldTranslate"
+          ></translate-widget>
         </section>
         <section></section>
         <section></section>
     </div>
-  </div>
-  <div :class="$style.footer">
-    <log v-if="currentSection === 'wiki'" v-bind:header="highlightedText" v-bind:wikiResultsList="fetchConfig.wikipediaResultsList" v-on:wikipedia-fetch-result="setWikipediaUrlByTitle($event)"></log>
   </div>
 </div>
 
