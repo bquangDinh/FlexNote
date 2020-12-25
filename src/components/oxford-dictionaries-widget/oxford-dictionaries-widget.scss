@@ -7,6 +7,11 @@
         overflow: hidden;
     }
 
+    *{
+        color: black;
+        font-family: Helvetica, sans-serif;
+    }
+
     .oxford_header{
         &{
             width: 100%;
@@ -31,7 +36,7 @@
         border: 0;
         background-color: #3498db;
         transition: background-color .3s;
-        color: white;
+        color: white !important;
 
         &:hover, &:focus{
             outline: 0;
@@ -46,7 +51,7 @@
         width: calc(100% - 20px);
         border: 1px solid gray;
         background-color: #fdfdfd;
-        font-size: 1.1rem;
+        font-size: 1.1em;
         padding: 10px;
     }
 
@@ -73,7 +78,7 @@
 
             .group_header{
                 .title{
-                    font-size: 1.2rem;
+                    font-size: 1.2em;
                     font-weight: bold;
                 }
             }

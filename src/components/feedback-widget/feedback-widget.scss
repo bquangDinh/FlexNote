@@ -1,0 +1,20 @@
+.feedback_widget {
+    padding: 10px;
+    overflow-x: auto;
+    height: 90%;
+
+    *{
+        color: black;
+        font-family: Helvetica, sans-serif;
+    }
+
+    .fb_group{
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #ecf0f1;
+        border-radius: 10px;
+        -webkit-box-shadow: 1px 1px 6px 0px rgba(50, 50, 50, 0.75);
+        -moz-box-shadow:    1px 1px 6px 0px rgba(50, 50, 50, 0.75);
+        box-shadow:         1px 1px 6px 0px rgba(50, 50, 50, 0.75);
+    }
+}

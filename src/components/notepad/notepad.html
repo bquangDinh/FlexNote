@@ -27,6 +27,11 @@
                 <font-awesome-icon icon="atlas"></font-awesome-icon>
             </label>
         </li>
+        <li title="Feedback" @click="changeSection('feedback')">
+          <label :for="$style.tab4" role="button">
+            <font-awesome-icon icon="comment-alt"></font-awesome-icon>
+          </label>
+        </li>
         <!--
         <li title="Your Highlights" @click="changeSection('highlighter')">
             <label :for="$style.tab4" role="button">
@@ -61,7 +66,9 @@
           :not-the-first-time="oxfordConfig.notTheFirstTime"
           ></oxford-dictionaries-widget>
         </section>
-
+        <section>
+          <feedback-widget></feedback-widget>
+        </section>
         <!--Highlighter (comming soon)-->
         <!--
         <section></section>

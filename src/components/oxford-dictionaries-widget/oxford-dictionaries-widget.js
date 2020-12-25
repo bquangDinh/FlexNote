@@ -96,7 +96,10 @@ export default {
           this.word = val;
 
           //when the highlighted text changed, consider to fetch result again
-          this.fetchResult();
+          if(this.notTheFirstTime){
+            this.shouldOxford = true;
+            this.fetchResult();
+          } 
         }else{
           this.shouldOxford = false;
         }
@@ -114,12 +117,14 @@ export default {
     shouldOxford: {
       immediate: true,
       handler (val, oldVal){
+        console.log(val, oldVal);
       }
     },
     notTheFirstTime: {
       immediate: true,
       handler (val, oldVal){
         //this is the first time user touch to this section
+        console.log(val, oldVal);
         if (val){
           this.shouldOxford = true;
           this.fetchResult();
@@ -127,7 +132,6 @@ export default {
       }
     },
     sourceLanguage: {
-      immediate: true,
       handler (val, oldVal){
         this.shouldOxford = true;
         this.fetchResult();
@@ -168,14 +172,20 @@ export default {
           return this.oldResult;
         }
         if(!this.shouldOxford) {
-          this.warningText = "Result's already loaded.";
+          if(typeof this.oldResult.results !== 'undefined'){
+            this.warningText = "Result's already loaded.";
+          }else{
+            this.warningText = "No results found!";
+          }
           return this.oldResult;
         }
+
+        this.warningText = "Loading...";
 
         let response = await searchOnOxford(this.sourceLanguage.key, this.word);
 
         if(typeof response.results === 'undefined'){
-          this.warningText = "No entry found matching the given word. You should enter the root form of the word. For example: (not root) pixels --> (root) pixel";
+          this.warningText = "No entry found matching for the given word. You should enter the root form of the word. For example: (not root) pixels --> (root) pixel";
           return {};
         }
         

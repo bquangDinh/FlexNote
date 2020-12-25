@@ -2,13 +2,15 @@
 import WikipediaWidget from '../wikipedia-widget/index.vue';
 import TranslateWidget from '../translate-widget/index.vue';
 import OxfordDictionariesWidget from '../oxford-dictionaries-widget/index.vue';
+import FeedbackWidget from '../feedback-widget/index.vue';
 
 export default {
   name: 'notepad',
   components: {
     WikipediaWidget,
     TranslateWidget,
-    OxfordDictionariesWidget
+    OxfordDictionariesWidget,
+    FeedbackWidget
   },
   props: {
     showNotePad: {

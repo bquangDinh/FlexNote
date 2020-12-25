@@ -1,9 +1,10 @@
 {
   "manifest_version": 2,
-  "name": "__MSG_extName__",
+  "name": "Flexpad",
   "homepage_url": "http://localhost:8080/",
-  "description": "A Vue Browser Extension",
+  "description": "Open a Wikipedia pop up right in your page, searching knowledge now become easier, support Google Translation and Oxford Dictionaries",
   "default_locale": "en",
+  "version": "0.0.0.1",
   "permissions": [
     "activeTab",
     "<all_urls>",
@@ -16,7 +17,7 @@
   },
   "browser_action": {
     "default_popup": "popup.html",
-    "default_title": "__MSG_extName__",
+    "default_title": "Flexpad",
     "default_icon": {
       "19": "icons/19.png",
       "38": "icons/38.png"

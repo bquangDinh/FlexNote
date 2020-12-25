@@ -22,7 +22,8 @@ import {
     faChevronDown, 
     faChevronUp, 
     faExternalLinkAlt,
-    faEyeSlash
+    faEyeSlash,
+    faCommentAlt
 } from '@fortawesome/free-solid-svg-icons';
 
 /*-----FontAwesome Components-----*/
@@ -75,7 +76,8 @@ library.add(
     faChevronDown, 
     faChevronUp,
     faExternalLinkAlt,
-    faEyeSlash
+    faEyeSlash,
+    faCommentAlt
 );
 
 //register FontAwesome Component to VueJS

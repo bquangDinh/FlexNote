@@ -1,6 +1,11 @@
 $item-btn-color: #ecf0f1;
 
 .select_list {
+    *{
+        color: black;
+        font-family: Helvetica, sans-serif;
+    }
+
     .list{
         &{
             overflow-x: auto;

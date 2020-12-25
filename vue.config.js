@@ -77,7 +77,8 @@ module.exports = {
         "process.env.OXFORD_DICTIONARIES_API_KEY": JSON.stringify(process.env.OXFORD_DICTIONARIES_API_KEY),
         "process.env.OXFORD_DICTIONARIES_API_APP_ID": JSON.stringify(process.env.OXFORD_DICTIONARIES_API_APP_ID),
         "process.env.APP_NAME": JSON.stringify(process.env.APP_NAME),
-        "process.env.APP_DEBUG": JSON.stringify(process.env.APP_DEBUG)
+        "process.env.APP_DEBUG": JSON.stringify(process.env.APP_DEBUG),
+        "process.env.APP_PROXY_HOST": JSON.stringify(process.env.APP_PROXY_HOST)
       }),
     ],
   },

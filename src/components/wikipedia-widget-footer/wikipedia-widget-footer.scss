@@ -8,6 +8,8 @@
 
     *{
         box-sizing: border-box;
+        color: black;
+        font-family: Helvetica, sans-serif;
     }
 
     .log_container{
@@ -40,9 +42,13 @@
             border: 0;
             z-index: 99;
             background-color: #3498db;
-            color: white;
+            color: white !important;
             cursor: pointer;
             transition: background-color .2s;
+        }
+
+        svg{
+            color: white !important;
         }
 
         &:hover,
