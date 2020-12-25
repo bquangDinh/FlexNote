@@ -64,7 +64,7 @@ $content-selector: "~ .content > section";
         resize: both;
         display: flex;
         flex-direction: column;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
     }
 
     #close_button{
