@@ -30,7 +30,6 @@ export default {
     highlightedText: {
       immediate: true,
       handler (val, oldVal){
-        console.log(val, oldVal);
         if(val !== oldVal){
           this.firstLanguageInput = val;
         }else{
@@ -50,7 +49,6 @@ export default {
     shouldTranslate: {
       immediate: true,
       handler (val, oldVal){
-        console.log(val, oldVal);
       }
     },
     translatedText: {
@@ -85,8 +83,6 @@ export default {
         if(!this.shouldTranslate){
           return this.oldTranslatedText;
         }
-
-        console.log('Going to translate');
 
         this.showExceedWarning = false;
         return this.debounceTranslate(

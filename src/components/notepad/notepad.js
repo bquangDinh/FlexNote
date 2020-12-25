@@ -38,7 +38,6 @@ export default {
         if(val !== oldVal){
           this.oldHighlightedText = oldVal;
         }
-        console.log(val, oldVal);
       }
     },
   },

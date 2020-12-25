@@ -114,7 +114,7 @@ var shadow = treeHead.attachShadow({ mode: 'open' });
 //TODO: rename foo and load styles
 
 import { css_loader }  from '../../css-loader-shim';
-console.log(css_loader);
+
 css_loader.loadStyles(parent);
 
 /*Insert the app into main DOM*/
@@ -145,7 +145,6 @@ var App = new Vue({
         var self = this;
         this.$refs.myNotePad.$on('notepad-close', function(e){
             self.showNotePad = false;
-            console.log('Notepad is closed');
         });
     },
     render: function(createElement){
@@ -192,10 +191,6 @@ new SelectionMenu({
     content: showNotePadButton,
     //SelectionMenu will call handler after user click the button
     handler: function(e){
-        if(APP_DEBUG){
-            console.log('Open Notepad');
-        }
-        
         let highlightedText = preprocessText(this.selectedText);
         App.runNotePad(highlightedText);
 
@@ -205,8 +200,6 @@ new SelectionMenu({
     //SelectionMenu will call this function after user have selected a text on a webpage
     //Use this for debug only
     onselect: function(e){
-        if(APP_DEBUG){
-            console.log('Text is being highlighted: ' + this.selectedText);
-        }
+       
     }
 });

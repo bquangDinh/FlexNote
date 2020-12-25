@@ -44,12 +44,7 @@ export default {
           if(titles.length > MAX_RESULTS){
             titles = titles.slice(1, MAX_RESULTS + 1);
             this.currentResultsList = titles;
-            console.log(this.currentResultsList);
           }
-        }
-        
-        if(APP_DEBUG){
-          console.log('Wikipedia Src: ' + _src);
         }
 
         this.iframeSrc = _src;
@@ -102,11 +97,7 @@ export default {
         }
       })
       .catch(err => console.log(err));
-
-      if(APP_DEBUG){
-        console.log('Wikipedia responses: ', responses);
-      }
-
+      
       return responses;
     },
   }
