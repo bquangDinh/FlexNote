@@ -98,6 +98,7 @@ module.exports = {
           entries: {
             'content-script': [
               //'node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js',
+              //'css-loader-shim.js',
               'src/content-scripts/content-script.js',
             ]
           }

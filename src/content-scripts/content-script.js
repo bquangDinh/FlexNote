@@ -31,6 +31,9 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 /*-----Vue third-parties libaries > vue-async-computed-----*/
 import AsyncComputed from 'vue-async-computed'
 
+/*-----Vue third-parties libaries > Vue Custom Element-----*/
+import vueCustomElement from 'vue-custom-element';
+
 /*-----Other libaries-----*/
 import SelectionMenu from 'selection-menu';
 
@@ -59,6 +62,7 @@ function preprocessText(text){
 /*-----Main Here-----*/
 /*Initialize every third-parties VueJS libaries*/
 Vue.use(AsyncComputed);
+Vue.use(vueCustomElement);
 
 /*Initialize FontAwesome*/
 //Register every using icons to library
@@ -106,6 +110,9 @@ var shadow = treeHead.attachShadow({ mode: 'open' });
  *the notepad components in a wrapper. So we do it manually
 */
 //TODO: rename foo and load styles
+
+import { css_loader }  from '../../css-loader-shim';
+console.log(css_loader);
 css_loader.loadStyles(parent);
 
 /*Insert the app into main DOM*/
@@ -155,14 +162,32 @@ var App = new Vue({
 
 /*Create interactive button*/
 var showNotePadButtonID = APP_NAME + '-btn' + generateID('-');
-var showNotePadButtonTemplate = `
-<button id="${showNotePadButtonID}">FlexNote</button>
+var showNotePadButton = document.createElement('button');
+showNotePadButton.id = showNotePadButtonID;
+showNotePadButton.innerHTML = 'Open Flexpad';
+
+/*Button Style*/
+let buttonStyle = document.createElement('style');
+
+buttonStyle.textContent = `
+    #${showNotePadButtonID}{
+        padding: 10px;
+        border-radius: 10px;
+        border: 0;
+        -webkit-box-shadow: 1px 1px 6px 0px rgba(50, 50, 50, 0.75);
+        -moz-box-shadow:    1px 1px 6px 0px rgba(50, 50, 50, 0.75);
+        box-shadow:         1px 1px 6px 0px rgba(50, 50, 50, 0.75);
+    }
 `;
+
+/*Append button to shadow DOM*/
+shadow.appendChild(buttonStyle);
+shadow.appendChild(showNotePadButton);
 
 /*Initialize SelectionMenu*/
 new SelectionMenu({
     container: document.body,
-    content: showNotePadButtonTemplate,
+    content: showNotePadButton,
     //SelectionMenu will call handler after user click the button
     handler: function(e){
         if(APP_DEBUG){

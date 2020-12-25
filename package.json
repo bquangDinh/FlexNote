@@ -24,6 +24,7 @@
     "tether": "^1.4.7",
     "vue": "^2.6.11",
     "vue-async-computed": "^3.9.0",
+    "vue-custom-element": "^3.2.14",
     "vue-shadow-dom": "^2.0.0"
   },
   "devDependencies": {
