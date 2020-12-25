@@ -50,6 +50,10 @@
             background-color: darken($color: #3498db, $amount: 20%);
             outline: 0;
         }
+
+        &.expand{
+            top: -30px;
+        }
     }
 
     .log_header{

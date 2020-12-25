@@ -27,11 +27,13 @@
                 <font-awesome-icon icon="atlas"></font-awesome-icon>
             </label>
         </li>
+        <!--
         <li title="Your Highlights" @click="changeSection('highlighter')">
             <label :for="$style.tab4" role="button">
               <font-awesome-icon icon="highlighter"></font-awesome-icon>
             </label>
         </li>
+      -->
     </ul>
 
     <!--
@@ -42,16 +44,28 @@
 
     <div :class="$style.content">
         <section>
-            <wikipedia-widget :highlighted-text="highlightedText"></wikipedia-widget>
+            <wikipedia-widget 
+            :highlighted-text="highlightedText">
+          </wikipedia-widget>
         </section>
         <section>
           <translate-widget 
           :highlighted-text="highlightedText" 
-          :should-translate="shouldTranslate"
+          :should-translate="translateConfig.shouldTranslate"
           ></translate-widget>
         </section>
+        <section>
+          <oxford-dictionaries-widget
+          :highlighted-text="highlightedText"
+          :should-oxford="oxfordConfig.shouldOxford"
+          :not-the-first-time="oxfordConfig.notTheFirstTime"
+          ></oxford-dictionaries-widget>
+        </section>
+
+        <!--Highlighter (comming soon)-->
+        <!--
         <section></section>
-        <section></section>
+        -->
     </div>
   </div>
 </div>

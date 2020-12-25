@@ -116,7 +116,10 @@ $content-selector: "~ .content > section";
             flex: 1;
             position: relative;
             padding: 20px;
-            height: 100%;
+
+            //height 100% will exceed the limit (because margin, padding will be included)
+            //cause the height will exceed the max height and break the whole layout
+            height: 90%;
             min-width: #{$tab-count * 60px};
             display: flex;
             flex-direction: column;
@@ -223,8 +226,9 @@ $content-selector: "~ .content > section";
         .content{
             &{
                 flex: 1;
+                overflow: hidden;
+                margin-bottom: 10px;
                 margin-top: 30px;
-                height: 100%
             }
 
             section{

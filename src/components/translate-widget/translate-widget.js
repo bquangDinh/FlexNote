@@ -78,6 +78,10 @@ export default {
           return '';
         }
 
+        if(this.firstLanguageInput.trim() === ''){
+          return '';
+        }
+
         if(!this.shouldTranslate){
           return this.oldTranslatedText;
         }

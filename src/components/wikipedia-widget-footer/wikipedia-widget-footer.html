@@ -1,5 +1,5 @@
 <div :class="$style.log">
-  <button :class="$style.hide_log_btn" @click="isShowing = !isShowing">
+  <button :class="[$style.hide_log_btn, !isShowing ? $style.expand : '']" @click="isShowing = !isShowing">
     <font-awesome-icon icon="eye-slash" v-if="isShowing == true" key="icon-showing"></font-awesome-icon>
     <font-awesome-icon icon="external-link-alt" v-else key="icon-showing"></font-awesome-icon>
   </button>
