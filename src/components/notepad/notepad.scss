@@ -119,7 +119,7 @@ $content-selector: "~ .content > section";
 
             //height 100% will exceed the limit (because margin, padding will be included)
             //cause the height will exceed the max height and break the whole layout
-            height: 90%;
+            height: calc(100% - 20px);
             min-width: #{$tab-count * 60px};
             display: flex;
             flex-direction: column;
