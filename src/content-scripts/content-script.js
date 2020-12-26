@@ -200,6 +200,6 @@ new SelectionMenu({
     //SelectionMenu will call this function after user have selected a text on a webpage
     //Use this for debug only
     onselect: function(e){
-       
+
     }
 });

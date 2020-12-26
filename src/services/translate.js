@@ -145,7 +145,6 @@ export async function Translate(sourceLang, targetLang, text){
     .then(function(_response) {
         response.translatedText = _response.data.translations[0].translatedText;
     })
-    .catch(function(err) { console.error(err); });
-
+    
     return response;
 }

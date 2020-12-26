@@ -20,9 +20,6 @@ export default {
     highlightedText: {
       type: String,
       require: true,
-      validator: function(value){
-        return value.trim() !== '';
-      }
     }
   },
   watch: {
@@ -30,11 +27,6 @@ export default {
       immediate: true,
       handler (val, oldVal){
         this.isNotePadShowing = val;
-      }
-    },
-    highlightedText: {
-      immediate: true,
-      handler (val, oldVal){
       }
     },
   },
