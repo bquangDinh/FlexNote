@@ -35,9 +35,6 @@ export default {
     highlightedText: {
       immediate: true,
       handler (val, oldVal){
-        if(val !== oldVal){
-          this.oldHighlightedText = oldVal;
-        }
       }
     },
   },
@@ -62,15 +59,6 @@ export default {
       },
       isNotePadShowing: this.showNotePad,
       currentSection: 'wiki',
-      translateConfig: {
-        shouldTranslate: false,
-        notTheFirstTime: false,
-      },
-      oxfordConfig: {
-        shouldOxford: false,
-        notTheFirstTime: false,
-      },
-      oldHighlightedText: this.highlightedText,
     }
   },
   computed: {
@@ -116,49 +104,6 @@ export default {
     /*Button Events*/
     changeSection: function(sectionName){
       this.currentSection = sectionName;
-      
-      //show change once
-      if(this.currentSection !== 'wiki' && this.notTheFirstTime == false){
-        this.notTheFirstTime = true;
-      }
-
-      //user head to translate widget
-      if(sectionName === 'translate'){
-        //check if this is the first time
-        if(this.translateConfig.notTheFirstTime === false){
-          this.translateConfig.shouldTranslate = true;
-
-          //disable this option
-          this.translateConfig.notTheFirstTime = true;
-        }else{
-          //means this is the second time
-          if(this.highlightedText !== this.oldHighlightedText){
-            this.translateConfig.shouldTranslate = true;
-            this.oldHighlightedText = this.highlightedText;
-          }else{
-            this.translateConfig.shouldTranslate = false;
-          }
-        }
-      }
-
-      //user head to oxford widget
-      if(sectionName === 'dictionaries'){
-        //check if this is the first time
-        if(this.oxfordConfig.notTheFirstTime === false){
-          this.oxfordConfig.shouldOxford = true;
-
-          //disable this option
-          this.oxfordConfig.notTheFirstTime = true;
-        }else{
-          //means this is the second time
-          if(this.highlightedText !== this.oldHighlightedText){
-            this.oxfordConfig.shouldTranslate = true;
-            this.oldHighlightedText = this.highlightedText;
-          }else{
-            this.oxfordConfig.shouldTranslate = false;
-          }
-        }
-      }
     },
     closeNotePad: function(e){
       this.isNotePadShowing = false;

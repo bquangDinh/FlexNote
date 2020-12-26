@@ -35,10 +35,16 @@
         background-color: #3498db;
         transition: background-color .3s;
         color: white !important;
+        cursor: pointer;
 
         &:hover, &:focus{
             outline: 0;
             background-color: darken(#3498db, 20%);
+        }
+
+        &.disable_search{
+            background-color: darken(#3498db, 50%);
+            cursor: default;
         }
     }
 

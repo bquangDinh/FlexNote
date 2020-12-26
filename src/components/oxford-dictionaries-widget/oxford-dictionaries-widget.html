@@ -16,6 +16,7 @@
     />
     <button 
     :id="$style.searchOxford"
+    :class="{ [$style.disable_search] : !shouldDoOxford }"
     @click="fetchResult"
     >
       Search

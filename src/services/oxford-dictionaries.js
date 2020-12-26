@@ -23,12 +23,10 @@ export async function searchOnOxford(sourceLang, text){
     let response = null;
 
     if(text === ''){
-        console.error('Empty words detected');
         return response;
     }
 
     if(text.split(' ').length > 1){
-        console.error('Multiple words detected');
         return response;
     }
 
@@ -38,12 +36,10 @@ export async function searchOnOxford(sourceLang, text){
     const APP_PROXY_HOST = process.env.APP_PROXY_HOST;
 
     if(!OXFORD_DICTIONARIES_API_KEY || !OXFORD_DICTIONARIES_API_APP_ID){
-        console.error('Oxford Dictionaries key not found');
         return response;
     }
 
     if(!APP_PROXY_HOST){
-        console.error('Proxy not found');
         return response;
     }
 
@@ -70,7 +66,6 @@ export async function searchOnOxford(sourceLang, text){
     .then(function(_response) {
         response = _response;
     })
-    .catch(function(err) { console.error(err); });
-
+    
     return response;
 }

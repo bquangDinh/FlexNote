@@ -79,13 +79,19 @@ export default {
         return value.trim() !== ''
       }
     },
-    shouldOxford: {
-      type: Boolean,
-      default: false
+    widgetNameProp: {
+      type: String,
+      default: 'dictionaries',
+      validator: function(value){
+        return value !== '';
+      }
     },
-    notTheFirstTime: {
-      type: Boolean,
-      default: false,
+    currentWidget: {
+      type: String,
+      default: 'wiki',
+      validator: function(value){
+        return value !== '';
+      }
     }
   },
   watch: {
@@ -94,46 +100,41 @@ export default {
       handler (val, oldVal){
         if(val !== oldVal){
           this.word = val;
+          this.shouldDoOxford = true;
 
-          //when the highlighted text changed, consider to fetch result again
-          if(this.notTheFirstTime){
-            this.shouldOxford = true;
+          if(this.widgetName === this.currentWidget){      
             this.fetchResult();
-          } 
+          }
         }else{
-          this.shouldOxford = false;
+          this.shouldDoOxford = false;
         }
       }
     },
     word: {
       handler (val, oldVal){
         if(val !== oldVal){
-          this.shouldOxford = true;
+          if(val.trim().toLowerCase() !== this.oldSearchTerm.trim().toLowerCase()){
+            this.shouldDoOxford = true;
+          }else{
+            this.shouldDoOxford = false;
+          }
         }else{
-          this.shouldOxford = false;
+          this.shouldDoOxford = false;
         }
       }
     },
-    shouldOxford: {
+    currentWidget: {
       immediate: true,
       handler (val, oldVal){
-        console.log(val, oldVal);
-      }
-    },
-    notTheFirstTime: {
-      immediate: true,
-      handler (val, oldVal){
-        //this is the first time user touch to this section
-        console.log(val, oldVal);
-        if (val){
-          this.shouldOxford = true;
+        if(this.widgetName === val){
+          //user activate this widget
           this.fetchResult();
         }
       }
     },
     sourceLanguage: {
       handler (val, oldVal){
-        this.shouldOxford = true;
+        this.shouldDoOxford = true;
         this.fetchResult();
       }
     },
@@ -156,27 +157,34 @@ export default {
       result: {},
       lexicalEntries: {},
       uid: generateID(),
-      warningText: ''
+      warningText: '',
+      shouldDoOxford: false,
+      widgetName: this.widgetNameProp,
+      oldSearchTerm: ''
     }
   },
   mounted () {
   },
   methods: {
     fetchPageWithOxford: async function(){
+        //user don't activate the widget yet
+        if(this.widgetName !== this.currentWidget) return {};
+
+        if(!this.shouldDoOxford) {
+          if(typeof this.oldResult.results !== 'undefined'){
+            this.warningText = "Result's already loaded.";
+          }else{
+            this.warningText = "No results found!";
+          }
+          return this.oldResult;
+        }
+
         if(this.word.trim() === '') {
           this.warningText = 'Empty word detected!';
           return {};
         }
         if(this.word.split(' ').length > 1){
           this.warningText = 'Multiple word detected! Please enter only one word.';
-          return this.oldResult;
-        }
-        if(!this.shouldOxford) {
-          if(typeof this.oldResult.results !== 'undefined'){
-            this.warningText = "Result's already loaded.";
-          }else{
-            this.warningText = "No results found!";
-          }
           return this.oldResult;
         }
 
@@ -201,8 +209,10 @@ export default {
       this.lexicalEntries = et !== null ? et['lexicalEntries'] : {};
 
       //when doing fetching, disable shoudOxford to prevent spam
-      this.shouldOxford = false;
-    }
+      this.shouldDoOxford = false;
+
+      this.oldSearchTerm = this.word;
+    },
   }
 }
 

@@ -8,6 +8,19 @@ import { keyLabelLangs, Translate } from '../../services/translate';
 
 const EXCEED_WORDS_LIMIT = 20;
 
+//https://stackoverflow.com/a/53486112
+function debounce (fn, delay) {
+  var timeoutID = null
+  return function () {
+    clearTimeout(timeoutID)
+    var args = arguments
+    var that = this
+    timeoutID = setTimeout(function () {
+      fn.apply(that, args)
+    }, delay)
+  }
+}
+
 export default {
   name: 'translate-widget',
   components: {
@@ -21,34 +34,49 @@ export default {
         return value !== '';
       }
     },
-    shouldTranslate: {
-      type: Boolean,
-      default: false
+    widgetNameProp: {
+      type: String,
+      default: 'translate',
+      validator: function(value){
+        return value !== '';
+      }
+    },
+    currentWidget: {
+      type: String,
+      default: 'wiki',
+      validator: function(value){
+        return value !== '';
+      }
     }
   },
   watch: {
+    firstLanguage: {
+      handler (val, oldVal){
+        this.shouldDoTranslate = true;
+      }
+    },
+    targetLanguage: {
+      handler (val, oldVal){
+        this.shouldDoTranslate = true;
+      }
+    },
     highlightedText: {
       immediate: true,
       handler (val, oldVal){
-        if(val !== oldVal){
-          this.firstLanguageInput = val;
-        }else{
-          this.shouldTranslate = false;
-        }
+        this.firstLanguageInput = val;
       }
     },
-    firstLanguageInput: {
-      handler (val, oldVal){
-        if(val !== oldVal){
-          this.shouldTranslate = true;
-        }else{
-          this.shouldTranslate = false;
-        }
-      }
-    },
-    shouldTranslate: {
+    firstLanguageInput: debounce(function (val, oldVal){
+      this.debouncedInput = val;
+    }, 500),
+    debouncedInput: {
       immediate: true,
       handler (val, oldVal){
+        if(val !== oldVal){
+          this.shouldDoTranslate = true;
+        }else{
+          this.shouldDoTranslate = false;
+        }
       }
     },
     translatedText: {
@@ -65,36 +93,45 @@ export default {
       firstLanguageInput: this.highlightedText,
       showExceedWarning: false,
       EXCEED_WORDS_LIMIT: EXCEED_WORDS_LIMIT,
-      oldTranslatedText: ''
+      oldTranslatedText: '',
+      shouldDoTranslate: false,
+      widgetName: this.widgetNameProp,
+      debouncedInput: this.highlightedText
     }
   },
   asyncComputed: {
     translatedText: {
       get(){
-        if(this.firstLanguageInput.length > EXCEED_WORDS_LIMIT){
+        if(this.currentWidget !== this.widgetName){
+          return this.oldTranslatedText;
+        }
+        
+        if(!this.shouldDoTranslate){
+          return this.oldTranslatedText;
+        }
+
+        if(this.debouncedInput.length > EXCEED_WORDS_LIMIT){
           this.showExceedWarning = true;
           return '';
         }
 
-        if(this.firstLanguageInput.trim() === ''){
+        if(this.debouncedInput.trim() === ''){
           return '';
-        }
-
-        if(!this.shouldTranslate){
-          return this.oldTranslatedText;
-        }
+        } 
 
         this.showExceedWarning = false;
+        this.shouldDoTranslate = false;
+
         return this.debounceTranslate(
           this.firstLanguage.key, 
           this.targetLanguage.key, 
-          this.firstLanguageInput, 
+          this.debouncedInput, 
           400)
         .then(response => {
           return response;
         });
       },
-      default: 'Translating...'
+      default: 'Translating...',
     }
   },
   mounted () {
@@ -110,11 +147,8 @@ export default {
      */
     debounceTranslate: async function(firstLangKey, targetLangKey, text, milisec){
       let result = '';
+      
       if(text && text.trim() !== ''){
-        await new Promise(resolve => {
-          setTimeout(resolve, milisec);
-        });
-
         let translated = await Translate(firstLangKey, targetLangKey, text);
         result = translated.translatedText;
       }
@@ -122,7 +156,6 @@ export default {
       return result;
     },
     revertTranslate: function(){
-      this.shouldTranslate = true;
       let temp = this.firstLanguage;
       this.firstLanguage = this.targetLanguage;
       this.targetLanguage = temp;
