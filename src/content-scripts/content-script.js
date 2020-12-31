@@ -39,8 +39,6 @@ import vueCustomElement from 'vue-custom-element';
 import SelectionMenu from 'selection-menu';
 
 /*-----Modules-----*/
-import DomHandler from '../modules/dom-handler';
-import GoogleStorageHandler from '../modules/google-storage-handler';
 
 /*-----Helper Functions-----*/
 
