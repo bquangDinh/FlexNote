@@ -39,6 +39,9 @@ export const HIGHLIGHT_STYLES = {
             border-radius: 5px;
             cursor       : pointer;
             position     : relative;
+            box-shadow   : ${HIGHLIGHT_COLORS.IMPORTANT.BACKGROUND_COLOR} 0px 0px 0.35em;
+            -webkit-box-shadow: ${HIGHLIGHT_COLORS.IMPORTANT.BACKGROUND_COLOR} 0px 0px 0.35em;
+            -moz-box-shadow   : ${HIGHLIGHT_COLORS.IMPORTANT.BACKGROUND_COLOR} 0px 0px 0.35em;
         `
     },
     REVIEW: {
@@ -49,6 +52,9 @@ export const HIGHLIGHT_STYLES = {
             border-radius: 5px;
             cursor       : pointer;
             position     : relative;
+            box-shadow   : ${HIGHLIGHT_COLORS.REVIEW.BACKGROUND_COLOR} 0px 0px 0.35em;
+            -webkit-box-shadow: ${HIGHLIGHT_COLORS.REVIEW.BACKGROUND_COLOR} 0px 0px 0.35em;
+            -moz-box-shadow   : ${HIGHLIGHT_COLORS.REVIEW.BACKGROUND_COLOR} 0px 0px 0.35em;
         `
     },
     TERM: {
@@ -59,6 +65,9 @@ export const HIGHLIGHT_STYLES = {
             border-radius: 5px;
             cursor       : pointer;
             position     : relative;
+            box-shadow   : ${HIGHLIGHT_COLORS.TERM.BACKGROUND_COLOR} 0px 0px 0.35em;
+            -webkit-box-shadow: ${HIGHLIGHT_COLORS.TERM.BACKGROUND_COLOR} 0px 0px 0.35em;
+            -moz-box-shadow   : ${HIGHLIGHT_COLORS.TERM.BACKGROUND_COLOR} 0px 0px 0.35em;
         `
     },
     OTHER: {
@@ -69,6 +78,9 @@ export const HIGHLIGHT_STYLES = {
             border-radius: 5px;
             cursor       : pointer;
             position     : relative;
+            box-shadow   : ${HIGHLIGHT_COLORS.OTHER.BACKGROUND_COLOR} 0px 0px 0.35em;
+            -webkit-box-shadow: ${HIGHLIGHT_COLORS.OTHER.BACKGROUND_COLOR} 0px 0px 0.35em;
+            -moz-box-shadow   : ${HIGHLIGHT_COLORS.OTHER.BACKGROUND_COLOR} 0px 0px 0.35em;
         `
     },
     EXAMPLE: {
@@ -79,65 +91,163 @@ export const HIGHLIGHT_STYLES = {
             border-radius: 5px;
             cursor       : pointer;
             position     : relative;
+            box-shadow   : ${HIGHLIGHT_COLORS.EXAMPLE.BACKGROUND_COLOR} 0px 0px 0.35em;
+            -webkit-box-shadow: ${HIGHLIGHT_COLORS.EXAMPLE.BACKGROUND_COLOR} 0px 0px 0.35em;
+            -moz-box-shadow   : ${HIGHLIGHT_COLORS.EXAMPLE.BACKGROUND_COLOR} 0px 0px 0.35em;
         `
     }
 };
 
 export const HighlightHandler = (function(){
     var highlighter = null;
-    var currentHighlightColor = HIGHLIGHT_STYLES.REVIEW.NAME; //default;
 
-    var updateRangyFromStorage = function(newSerialize){
+    /*Private methods*/
+    function restoreHighlights(serializedRangy){
+        if(!highlighter){
+            console.error('Highlighter is not initialized');
+            return false;
+        }
+
+        highlighter.deserialize(serializedRangy);
+
+        console.log('Restored highlights');
+    }
+
+    /*Google Storage for Highlight*/
+    var HighlightChromeStorage = (function(){
+        let HIGHLIGHTS_STORAGE_KEY = 'highlight_storage';
+        let HIGHLIGHTS_LIST_KEY = 'highlights';
+        let HIGHLIGHTS_RANGY_SERIALIZED = 'rangy';
+        let urlAsKey = window.location.href;
+
         if(typeof chrome.storage === 'undefined'){
             console.error('Storage not found');
             return false;
         }
-        
-        let urlAsKey = window.location.href;
-        let HIGHLIGHTS_STORAGE_KEY = 'highlight_storage';
-        let HIGHLIGHTS_LIST_KEY = 'highlights';
-        let HIGHLIGHTS_RANGY_SERIALIZED = 'rangy';
 
-        chrome.storage.sync.get(function(cfg){
-            if(typeof cfg[urlAsKey] === 'undefined'){
-                console.warn('Storage empty');
+        return {
+            addHighlightSelectionToStorage: function(highlightInfo, rangySerialized, callback){
+                chrome.storage.sync.get(function(cfg){
+                    console.log(cfg);
+
+                    if(typeof cfg[urlAsKey] === 'undefined') cfg[urlAsKey] = {};
+
+                    if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] !== 'undefined'){
+                        cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] = rangySerialized;
+                        cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY].push(highlightInfo);
+                    }else{
+                        cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] = {};
+                        cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] = rangySerialized;
+                        cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY] = [highlightInfo];
+                    }
+
+                    chrome.storage.sync.set(cfg, function(){
+                        //TODO: remove console.log, and call callback only
+                        console.log('Saved highlight to Chrome Storage');
+                        
+                        if(typeof callback === 'function') callback();
+                    });
+                });
+            },
+            removeHighlightSelectionFromStorage: function(element, callback = null){
+                if(!highlighter){
+                    console.error('Highlighter is not initialized');
+                    return false;
+                }
+
+                let highlight = highlighter.getHighlightForElement(element);
+
+                if(highlight){
+                    highlighter.removeHighlights([highlight]);
+
+                    let newSerialize = highlighter.serialize();
+
+                    //update storage
+                    chrome.storage.sync.get(function(cfg){
+                        if(typeof cfg[urlAsKey] === 'undefined'){
+                            console.warn('Storage empty');
+                            return false;
+                        }
+
+                        if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] === 'undefined'){
+                            console.warn('Highlight empty');
+                            return false;
+                        }
+                        
+                        //TODO: update highlight info
+                        cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] = newSerialize;
+
+                        chrome.storage.sync.get(cfg, function(){
+                            console.log('Removed a highlight');
+
+                            if(typeof callback === 'function'){
+                                callback();
+                            }
+                        });
+                    });
+                }
+            },
+            updateHighlightSelectionFromStorage: function(){
                 return false;
+            },
+            loadHighlightsFromStorage: function(){
+                chrome.storage.sync.get(function(cfg){
+                    if(typeof cfg[urlAsKey] === 'undefined'){
+                        console.warn('Storage empty');
+                        return false;
+                    }
+
+                    if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] === 'undefined'){
+                        console.warn('No highlights found');
+                        return false;
+                    }
+
+                    if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] === 'undefined'){
+                        console.warn('No serialized string rangy found, something went wrong !');
+                        //TODO: any solution to prevent this???
+                        return false;
+                    }
+
+                    let rangy = cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED];
+
+                    console.log('Loaded rangy', rangy);
+
+                    //restore highlights
+                    restoreHighlights(rangy);
+                });
             }
+        }
+    })();
 
-            if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] === 'undefined'){
-                console.warn('Highlight empty');
-                return false;
-            }
-
-            cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] = newSerialize;
-
-            chrome.storage.sync.set(cfg, function(){
-                console.log('Updated rangy');
-            });
-        });
-    };
-
-    return {
+    return { 
         initialize: function(){
-            /*Init Rangy*/
+            if(typeof rangy === 'undefined'){
+                console.error('rangy is not defined');
+                return false;
+            }
+
+            /** Initialize Rangy*/
             rangy.init();
+            
+            /*Create Highlighter instance*/
             highlighter = rangy.createHighlighter();
 
-            /*load styles*/
+            /*Load all styles to Highlighter Class Applier*/
             let style = document.createElement('style');
 
             Object.keys(HIGHLIGHT_STYLES).forEach(key => {
                 let className = HIGHLIGHT_STYLES[key].NAME;
                 let classContent = HIGHLIGHT_STYLES[key].STYLE;
-
-                highlighter.addClassApplier(rangy.createClassApplier(className, {
+                let classApplier = rangy.createClassApplier(className, {
                     ignoreWhiteSpace: true,
                     onElementCreate: function(el, cl){
                         if(el){
+                            //TODO: add variable instead
                             el.classList.add('highlight-flexnote');
                         }
                     }
-                }));
+                });
+                highlighter.addClassApplier(classApplier);
 
                 style.textContent += `
                     .${className}{
@@ -148,113 +258,28 @@ export const HighlightHandler = (function(){
 
             /*Append style to document*/
             document.body.insertBefore(style, document.body.firstChild);
-        },
-        changeHighlightColor: function(highlightStyle){
-            currentHighlightColor = highlightStyle;
-        },
-        highlightSelection: function(){
-            if(highlighter){
-                highlighter.highlightSelection(currentHighlightColor);
-                return highlighter.serialize();
-            }
 
-            console.error('Highlighter is not initialized');
-            return null;
+            /*Load all existing highlights which are stored in Chrome Storage*/
+            HighlightChromeStorage.loadHighlightsFromStorage();
         },
-        restoreHighlights: function(serializedHighlight){
-            console.log(serializedHighlight);
-            if(highlighter){
-                highlighter.deserialize(serializedHighlight);
-            }else{
+        highlightSelection: function(highlightColorClass = HIGHLIGHT_STYLES.REVIEW.NAME){
+            if(!highlighter){
                 console.error('Highlighter is not initialized');
-            } 
-        },
-        addHighlightSelectionToStorage: function(highlightInfo, rangySerialized){
-            /*
-            Highlight Info Structure:
-                content: <String>
-            */
-
-            if(typeof chrome.storage === 'undefined'){
-                console.error('No storage found');
                 return false;
             }
+            
+            /*Make selection*/
+            highlighter.highlightSelection(highlightColorClass);
 
-            let HIGHLIGHTS_STORAGE_KEY = 'highlight_storage';
-            let HIGHLIGHTS_LIST_KEY = 'highlights';
-            let HIGHLIGHTS_RANGY_SERIALIZED = 'rangy';
+            /*Serialize all highlights and save to Chrome Storage*/
+            let serialized = highlighter.serialize();
 
-            let urlAsKey = window.location.href;
-
-            chrome.storage.sync.get(function(cfg){
-                console.log(cfg);
-
-                if(typeof cfg[urlAsKey] === 'undefined') cfg[urlAsKey] = {};
-
-                if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] !== 'undefined'){
-                    cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] = rangySerialized;
-                    cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY].push(highlightInfo);
-                }else{
-                    cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] = {};
-                    cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] = rangySerialized;
-                    cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY] = [highlightInfo];
-                }
-
-                chrome.storage.sync.set(cfg, function(){
-                    console.log('Saved highlight to Chrome Storage');
-                });
-            });
-
-            return true;
-        },
-        removeHighlightSelectionFromStorage: function(element){
-            var highlight = highlighter.getHighlightForElement(element);
-            if(highlight){
-                highlighter.removeHighlights([highlight]);
-                let newSerialize = highlighter.serialize();
-                updateRangyFromStorage(newSerialize);
-            }else{
-                console.error('No highlight found');
-            }
-        },
-        loadHighlightsFromStorage: function(){
-            if(typeof chrome.storage === 'undefined') {
-                console.error('No storage found');
-                return false;
-            }
-
-            let HIGHLIGHTS_STORAGE_KEY = 'highlight_storage';
-            let HIGHLIGHTS_LIST_KEY = 'highlights';
-            let HIGHLIGHTS_RANGY_SERIALIZED = 'rangy';
-
-            let urlAsKey = window.location.href;
-
-            var self = this;
-
-            chrome.storage.sync.get(function(cfg){
-                if(typeof cfg[urlAsKey] === 'undefined'){
-                    console.warn('Empty storage');
-                    return false;
-                }
-
-                if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] === 'undefined'){
-                    console.warn('No highlights found');
-                    return false;
-                }
-
-                if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] === 'undefined'){
-                    console.warn('No rangy serialized string found, something went wrong !');
-                    return false;
-                }
-
-                let rangy = cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED];
-
-                console.log('Loaded rangy', rangy);
-
-                self.restoreHighlights(rangy);
-            });
+            HighlightChromeStorage.addHighlightSelectionToStorage('Test', serialized);
+        },  
+        unhighlightSelection: function(element){
+            HighlightChromeStorage.removeHighlightSelectionFromStorage(element);
         }
-    }
+    };
 })();
 
 /*

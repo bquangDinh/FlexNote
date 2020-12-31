@@ -63,6 +63,20 @@ function preprocessText(text){
     return text;
 }
 
+
+//https://stackoverflow.com/a/30880807 : replace $.on of Jquery
+function delegate(el, evt, sel, handler) {
+    el.addEventListener(evt, function(event) {
+        var t = event.target;
+        while (t && t !== this) {
+            if (t.matches(sel)) {
+                handler.call(t, event);
+            }
+            t = t.parentNode;
+        }
+    });
+}
+
 /*-----Main Here-----*/
 /*Initialize every third-parties VueJS libaries*/
 Vue.use(AsyncComputed);
@@ -173,32 +187,19 @@ document.onreadystatechange = function(){
         console.log('loaded');
         
         HighlightHandler.initialize();
-        HighlightHandler.loadHighlightsFromStorage();
     }
 }
 
-//https://stackoverflow.com/a/30880807 : replace $.on of Jquery
-function delegate(el, evt, sel, handler) {
-    el.addEventListener(evt, function(event) {
-        var t = event.target;
-        while (t && t !== this) {
-            if (t.matches(sel)) {
-                handler.call(t, event);
-            }
-            t = t.parentNode;
-        }
-    });
-}
-
+/*Initialize highlight click event*/
 delegate(document, 'dblclick', '.highlight-flexnote', function(e){
-    console.log('Heyy');
-    HighlightHandler.removeHighlightSelectionFromStorage(this);
+    HighlightHandler.unhighlightSelection(this);
 });
+
+/*Listen from background script to change highlight color*/
+/*TODO: Quick highlight color default is REVIEW*/
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse){
-        console.log(request);
-
         //excecute by command
         let command = request.command;
 
@@ -215,15 +216,8 @@ chrome.runtime.onMessage.addListener(
                 if(request.menuId === 'term') highlightColor = HIGHLIGHT_STYLES.TERM.NAME;
                 if(request.menuId === 'other') highlightColor = HIGHLIGHT_STYLES.OTHER.NAME;
 
-                HighlightHandler.changeHighlightColor(highlightColor);
-
                 //highlight the text
-                let serializedHighlight = HighlightHandler.highlightSelection();
-
-                //save highlight
-                HighlightHandler.addHighlightSelectionToStorage({
-                    content: request.selectionText
-                }, serializedHighlight); 
+                HighlightHandler.highlightSelection(highlightColor);
             }
         }
     }
@@ -240,9 +234,41 @@ var menuID = APP_NAME + '-menu' + generateID('-');
 var menuContainer = document.createElement('div');
 menuContainer.id = menuID;
 menuContainer.innerHTML = `
-    <button data-command='${COMMANDS_LIST.OPEN_FLEXPAD}'>Open Flexpad</button>
-    <button data-command='${COMMANDS_LIST.HIGHLIGHT}'>Quick Highlight</button>
-    <button data-command='${COMMANDS_LIST.ADD_NOTE}'>Add Note</button>
+    <button class='menu-btn' data-command='${COMMANDS_LIST.OPEN_FLEXPAD}'>Open Flexpad</button>
+    <button class='menu-btn'data-command='${COMMANDS_LIST.HIGHLIGHT}'>Quick Highlight</button>
+    <button class='menu-btn' data-command='${COMMANDS_LIST.ADD_NOTE}'>Add Note</button>
+`;
+
+/*Menu Style*/
+let menyStyle = document.createElement('style');
+
+menyStyle.textContent = `
+    #${menuID}{
+        border-radius: 10px;
+        border: 0;
+        padding: 5px;
+        background: white;
+        -webkit-box-shadow: 1px 1px 6px 0px rgba(50, 50, 50, 0.75);
+        -moz-box-shadow:    1px 1px 6px 0px rgba(50, 50, 50, 0.75);
+        box-shadow:         1px 1px 6px 0px rgba(50, 50, 50, 0.75);
+    }
+
+    #${menuID} .menu-btn{
+        display: block;
+        background: white;
+        color: black;
+        font-weight: bold;
+        border: 0;
+        padding: 5px;
+        cursor: pointer;
+        transition: all .3s;
+        font-family: Arial, sans-serif;
+    }
+
+    #${menuID} .menu-btn:hover{
+        background-color: #3498db;
+        color: white;
+    }
 `;
 
 /*Create interactive button*/
@@ -268,6 +294,7 @@ buttonStyle.textContent = `
 /*Append button to shadow DOM*/
 //shadow.appendChild(buttonStyle);
 //shadow.appendChild(showNotePadButton);
+shadow.appendChild(menyStyle);
 shadow.appendChild(menuContainer);
 
 /*Menu Click Events*/
@@ -277,13 +304,8 @@ function openFlexpad(highlightedText){
 }
 
 function quickHighlight(highlightedText){
-    //highlight the text
-    let serializedHighlight = HighlightHandler.highlightSelection();
-
-    //save highlight
-    HighlightHandler.addHighlightSelectionToStorage({
-        content: highlightedText
-    }, serializedHighlight);  
+    //highlight the text with default color
+    HighlightHandler.highlightSelection();
 }
 
 /*Initialize SelectionMenu*/

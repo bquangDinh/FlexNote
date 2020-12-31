@@ -1,43 +1,52 @@
+const HIGHLIGHT_COLOR_SELECTION_MENU = {
+  id: 'highlight_color_menu',
+  title: 'Select highlight color',
+  contexts: ['selection'],
+  children: [
+    {
+      id: 'important',
+      title: 'important (red)',
+      contexts: ['selection'],
+    },
+    {
+      id: 'review',
+      title: 'review (yellow)',
+      contexts: ['selection'],
+    },
+    {
+      id: 'term',
+      title: 'term (green)',
+      contexts: ['selection'],
+    },
+    {
+      id: 'example',
+      title: 'example (pink)',
+      contexts: ['selection'],
+    },
+    {
+      id: 'other',
+      title: 'other (orange)',
+      contexts: ['selection'],
+    }
+  ]
+};
+
 chrome.runtime.onInstalled.addListener(function() {
+  /*Create Highlight Color Selection Menu*/
   chrome.contextMenus.create({
-    "id": "highlight_color_menu",
-    "title": "Select highlight color",
-    "contexts": ["selection"]
+    "id": HIGHLIGHT_COLOR_SELECTION_MENU.id,
+    "title": HIGHLIGHT_COLOR_SELECTION_MENU.title,
+    "contexts": HIGHLIGHT_COLOR_SELECTION_MENU.contexts
   });
 
-  chrome.contextMenus.create({
-    "parentId": "highlight_color_menu",
-    "id": 'important',
-    "title": "important (red)",
-    "contexts": ["selection"]
-  });
-
-  chrome.contextMenus.create({
-    "parentId": "highlight_color_menu",
-    "id": "review",
-    "title": "review (yellow)",
-    "contexts": ["selection"]
-  });
-
-  chrome.contextMenus.create({
-    "parentId": "highlight_color_menu",
-    "id": "example",
-    "title": "example (pink)",
-    "contexts": ["selection"]
-  });
-
-  chrome.contextMenus.create({
-    "parentId": "highlight_color_menu",
-    "id": "term",
-    "title": "term (green)",
-    "contexts": ["selection"]
-  });
-
-  chrome.contextMenus.create({
-    "parentId": "highlight_color_menu",
-    "id": "other",
-    "title": "other (orange)",
-    "contexts": ["selection"]
+  /*Create sub-menus*/
+  HIGHLIGHT_COLOR_SELECTION_MENU.children.forEach(menu => {
+    chrome.contextMenus.create({
+      "parentId": HIGHLIGHT_COLOR_SELECTION_MENU.id,
+      "id": menu.id,
+      "title": menu.title,
+      "contexts": menu.contexts
+    });
   });
 });
 
