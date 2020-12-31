@@ -38,6 +38,10 @@ import vueCustomElement from 'vue-custom-element';
 /*-----Other libaries-----*/
 import SelectionMenu from 'selection-menu';
 
+/*-----Modules-----*/
+import DomHandler from '../modules/dom-handler';
+import GoogleStorageHandler from '../modules/google-storage-handler';
+
 /*-----Helper Functions-----*/
 
 /**
@@ -161,6 +165,35 @@ var App = new Vue({
     }
 });
 
+/*-----Highlighter-----*/
+/*Initialize*/
+document.onreadystatechange = function(){
+    var state = document.readyState;
+
+    if(state === 'complete'){
+        console.log('loaded');
+
+        HighlightHandler.initialize();
+        HighlightHandler.loadHighlightsFromStorage();
+    }
+}
+
+/*Create an interactive menu*/
+var COMMANDS_LIST = {
+    OPEN_FLEXPAD: 'open-flexpad',
+    HIGHLIGHT: 'highlight',
+    ADD_NOTE: 'add-note'
+};
+
+var menuID = APP_NAME + '-menu' + generateID('-');
+var menuContainer = document.createElement('div');
+menuContainer.id = menuID;
+menuContainer.innerHTML = `
+    <button data-command='${COMMANDS_LIST.OPEN_FLEXPAD}'>Open Flexpad</button>
+    <button data-command='${COMMANDS_LIST.HIGHLIGHT}'>Highlight</button>
+    <button data-command='${COMMANDS_LIST.ADD_NOTE}'>Add Note</button>
+`;
+
 /*Create interactive button*/
 var showNotePadButtonID = APP_NAME + '-btn' + generateID('-');
 var showNotePadButton = document.createElement('button');
@@ -182,17 +215,45 @@ buttonStyle.textContent = `
 `;
 
 /*Append button to shadow DOM*/
-shadow.appendChild(buttonStyle);
-shadow.appendChild(showNotePadButton);
+//shadow.appendChild(buttonStyle);
+//shadow.appendChild(showNotePadButton);
+shadow.appendChild(menuContainer);
+
+/*Menu Click Events*/
+function openFlexpad(highlightedText){
+    highlightedText = preprocessText(highlightedText);
+    App.runNotePad(highlightedText);
+}
+
+function quickHighlight(highlightedText){
+    //highlight the text
+    let serializedHighlight = HighlightHandler.highlightSelection();
+
+    //save highlight
+    HighlightHandler.saveHighlightSelectionToStorage({
+        content: highlightedText
+    }, serializedHighlight);  
+}
+
+import HighlightHandler from '../modules/highlight-handler';
 
 /*Initialize SelectionMenu*/
 new SelectionMenu({
     container: document.body,
-    content: showNotePadButton,
+    content: menuContainer,
+    //fix bug here
+    minlength: 1,
     //SelectionMenu will call handler after user click the button
     handler: function(e){
-        let highlightedText = preprocessText(this.selectedText);
-        App.runNotePad(highlightedText);
+        let command = e.target.dataset.command;
+
+        if(command === COMMANDS_LIST.OPEN_FLEXPAD){
+            openFlexpad(this.selectedText);
+        }
+
+        if(command === COMMANDS_LIST.HIGHLIGHT){
+            quickHighlight(this.selectedText);
+        }
 
         //hide the button
         this.hide(true);
@@ -200,6 +261,6 @@ new SelectionMenu({
     //SelectionMenu will call this function after user have selected a text on a webpage
     //Use this for debug only
     onselect: function(e){
-       
+        
     }
 });
