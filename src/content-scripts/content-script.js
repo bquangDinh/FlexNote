@@ -39,6 +39,7 @@ import vueCustomElement from 'vue-custom-element';
 import SelectionMenu from 'selection-menu';
 
 /*-----Modules-----*/
+import { HighlightHandler, HIGHLIGHT_STYLES } from '../modules/highlight-handler';
 
 /*-----Helper Functions-----*/
 
@@ -170,11 +171,63 @@ document.onreadystatechange = function(){
 
     if(state === 'complete'){
         console.log('loaded');
-
+        
         HighlightHandler.initialize();
         HighlightHandler.loadHighlightsFromStorage();
     }
 }
+
+//https://stackoverflow.com/a/30880807 : replace $.on of Jquery
+function delegate(el, evt, sel, handler) {
+    el.addEventListener(evt, function(event) {
+        var t = event.target;
+        while (t && t !== this) {
+            if (t.matches(sel)) {
+                handler.call(t, event);
+            }
+            t = t.parentNode;
+        }
+    });
+}
+
+delegate(document, 'dblclick', '.highlight-flexnote', function(e){
+    console.log('Heyy');
+    HighlightHandler.removeHighlightSelectionFromStorage(this);
+});
+
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse){
+        console.log(request);
+
+        //excecute by command
+        let command = request.command;
+
+        if (command === null){
+            console.error('No command found');
+        }else{
+            if(command === 'highlight'){
+                //change color
+                let highlightColor = null;
+
+                if(request.menuId === 'important') highlightColor = HIGHLIGHT_STYLES.IMPORTANT.NAME;
+                if(request.menuId === 'review') highlightColor = HIGHLIGHT_STYLES.REVIEW.NAME;
+                if(request.menuId === 'example') highlightColor = HIGHLIGHT_STYLES.EXAMPLE.NAME;
+                if(request.menuId === 'term') highlightColor = HIGHLIGHT_STYLES.TERM.NAME;
+                if(request.menuId === 'other') highlightColor = HIGHLIGHT_STYLES.OTHER.NAME;
+
+                HighlightHandler.changeHighlightColor(highlightColor);
+
+                //highlight the text
+                let serializedHighlight = HighlightHandler.highlightSelection();
+
+                //save highlight
+                HighlightHandler.addHighlightSelectionToStorage({
+                    content: request.selectionText
+                }, serializedHighlight); 
+            }
+        }
+    }
+);
 
 /*Create an interactive menu*/
 var COMMANDS_LIST = {
@@ -188,7 +241,7 @@ var menuContainer = document.createElement('div');
 menuContainer.id = menuID;
 menuContainer.innerHTML = `
     <button data-command='${COMMANDS_LIST.OPEN_FLEXPAD}'>Open Flexpad</button>
-    <button data-command='${COMMANDS_LIST.HIGHLIGHT}'>Highlight</button>
+    <button data-command='${COMMANDS_LIST.HIGHLIGHT}'>Quick Highlight</button>
     <button data-command='${COMMANDS_LIST.ADD_NOTE}'>Add Note</button>
 `;
 
@@ -228,12 +281,10 @@ function quickHighlight(highlightedText){
     let serializedHighlight = HighlightHandler.highlightSelection();
 
     //save highlight
-    HighlightHandler.saveHighlightSelectionToStorage({
+    HighlightHandler.addHighlightSelectionToStorage({
         content: highlightedText
     }, serializedHighlight);  
 }
-
-import HighlightHandler from '../modules/highlight-handler';
 
 /*Initialize SelectionMenu*/
 new SelectionMenu({

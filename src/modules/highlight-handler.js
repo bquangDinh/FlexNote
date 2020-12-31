@@ -37,6 +37,8 @@ export const HIGHLIGHT_STYLES = {
             background   : ${HIGHLIGHT_COLORS.IMPORTANT.BACKGROUND_COLOR};
             color        : ${HIGHLIGHT_COLORS.IMPORTANT.FOREGROUND_COLOR};
             border-radius: 5px;
+            cursor       : pointer;
+            position     : relative;
         `
     },
     REVIEW: {
@@ -45,6 +47,8 @@ export const HIGHLIGHT_STYLES = {
             background   : ${HIGHLIGHT_COLORS.REVIEW.BACKGROUND_COLOR};
             color        : ${HIGHLIGHT_COLORS.REVIEW.FOREGROUND_COLOR};
             border-radius: 5px;
+            cursor       : pointer;
+            position     : relative;
         `
     },
     TERM: {
@@ -53,6 +57,8 @@ export const HIGHLIGHT_STYLES = {
             background   : ${HIGHLIGHT_COLORS.TERM.BACKGROUND_COLOR};
             color        : ${HIGHLIGHT_COLORS.TERM.FOREGROUND_COLOR};
             border-radius: 5px;
+            cursor       : pointer;
+            position     : relative;
         `
     },
     OTHER: {
@@ -61,6 +67,8 @@ export const HIGHLIGHT_STYLES = {
             background   : ${HIGHLIGHT_COLORS.OTHER.BACKGROUND_COLOR};
             color        : ${HIGHLIGHT_COLORS.OTHER.FOREGROUND_COLOR};
             border-radius: 5px;
+            cursor       : pointer;
+            position     : relative;
         `
     },
     EXAMPLE: {
@@ -69,12 +77,45 @@ export const HIGHLIGHT_STYLES = {
             background   : ${HIGHLIGHT_COLORS.EXAMPLE.BACKGROUND_COLOR};
             color        : ${HIGHLIGHT_COLORS.EXAMPLE.FOREGROUND_COLOR};
             border-radius: 5px;
+            cursor       : pointer;
+            position     : relative;
         `
     }
 };
 
-const HighlightHandler = (function(){
+export const HighlightHandler = (function(){
     var highlighter = null;
+    var currentHighlightColor = HIGHLIGHT_STYLES.REVIEW.NAME; //default;
+
+    var updateRangyFromStorage = function(newSerialize){
+        if(typeof chrome.storage === 'undefined'){
+            console.error('Storage not found');
+            return false;
+        }
+        
+        let urlAsKey = window.location.href;
+        let HIGHLIGHTS_STORAGE_KEY = 'highlight_storage';
+        let HIGHLIGHTS_LIST_KEY = 'highlights';
+        let HIGHLIGHTS_RANGY_SERIALIZED = 'rangy';
+
+        chrome.storage.sync.get(function(cfg){
+            if(typeof cfg[urlAsKey] === 'undefined'){
+                console.warn('Storage empty');
+                return false;
+            }
+
+            if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] === 'undefined'){
+                console.warn('Highlight empty');
+                return false;
+            }
+
+            cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] = newSerialize;
+
+            chrome.storage.sync.set(cfg, function(){
+                console.log('Updated rangy');
+            });
+        });
+    };
 
     return {
         initialize: function(){
@@ -89,9 +130,14 @@ const HighlightHandler = (function(){
                 let className = HIGHLIGHT_STYLES[key].NAME;
                 let classContent = HIGHLIGHT_STYLES[key].STYLE;
 
-                highlighter.addClassApplier(rangy.createClassApplier(className), {
-                    ignoreWhiteSpace: true
-                });
+                highlighter.addClassApplier(rangy.createClassApplier(className, {
+                    ignoreWhiteSpace: true,
+                    onElementCreate: function(el, cl){
+                        if(el){
+                            el.classList.add('highlight-flexnote');
+                        }
+                    }
+                }));
 
                 style.textContent += `
                     .${className}{
@@ -99,13 +145,16 @@ const HighlightHandler = (function(){
                     }
                 `;
             });
+
             /*Append style to document*/
             document.body.insertBefore(style, document.body.firstChild);
-
+        },
+        changeHighlightColor: function(highlightStyle){
+            currentHighlightColor = highlightStyle;
         },
         highlightSelection: function(){
             if(highlighter){
-                highlighter.highlightSelection(HIGHLIGHT_STYLES.REVIEW.NAME);
+                highlighter.highlightSelection(currentHighlightColor);
                 return highlighter.serialize();
             }
 
@@ -120,7 +169,7 @@ const HighlightHandler = (function(){
                 console.error('Highlighter is not initialized');
             } 
         },
-        saveHighlightSelectionToStorage: function(highlightInfo, rangySerialized){
+        addHighlightSelectionToStorage: function(highlightInfo, rangySerialized){
             /*
             Highlight Info Structure:
                 content: <String>
@@ -157,6 +206,16 @@ const HighlightHandler = (function(){
             });
 
             return true;
+        },
+        removeHighlightSelectionFromStorage: function(element){
+            var highlight = highlighter.getHighlightForElement(element);
+            if(highlight){
+                highlighter.removeHighlights([highlight]);
+                let newSerialize = highlighter.serialize();
+                updateRangyFromStorage(newSerialize);
+            }else{
+                console.error('No highlight found');
+            }
         },
         loadHighlightsFromStorage: function(){
             if(typeof chrome.storage === 'undefined') {
@@ -197,8 +256,6 @@ const HighlightHandler = (function(){
         }
     }
 })();
-
-export default HighlightHandler;
 
 /*
 const HighlightHandler = (function(){
