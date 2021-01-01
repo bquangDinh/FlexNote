@@ -2,13 +2,12 @@
     padding: 10px;
     overflow-x: auto;
     height: 90%;
-
-    *{
-        color: black;
-        font-family: Helvetica, sans-serif;
-    }
+    text-align: left;
 
     .fb_group{
+        font-size: 18px;
+        color: black;
+        font-family: Helvetica, sans-serif;
         padding: 10px;
         margin-bottom: 10px;
         background-color: #ecf0f1;

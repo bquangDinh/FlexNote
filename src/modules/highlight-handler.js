@@ -334,9 +334,9 @@ export const HighlightHandler = (function(){
 
             HighlightChromeStorage.addHighlightSelectionToStorage({
                 content: highlightedText,
-                color: highlightColorClass,
                 id: uuid,
-                classSelectorId: classSelectorId
+                classSelectorId: classSelectorId,
+                classColor: highlightColorClass,
             }, serialized);
         },  
         unhighlightSelection: function(element){

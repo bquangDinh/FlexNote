@@ -10,6 +10,7 @@
     <input type="radio" :id="$style.tab2" name="tab-control">
     <input type="radio" :id="$style.tab3" name="tab-control">
     <input type="radio" :id="$style.tab4" name="tab-control">
+    <input type="radio" :id="$style.tab5" name="tab-control">
 
     <ul>
         <li title="Wikipedia">
@@ -27,8 +28,13 @@
                 <font-awesome-icon icon="atlas"></font-awesome-icon>
             </label>
         </li>
-        <li title="Feedback" @click="changeSection('feedback')">
+        <li title="Your Highlights" @click="changeSection('highlighter')">
           <label :for="$style.tab4" role="button">
+            <font-awesome-icon icon="highlighter"></font-awesome-icon>
+          </label>
+        </li>
+        <li title="Feedback" @click="changeSection('feedback')">
+          <label :for="$style.tab5" role="button">
             <font-awesome-icon icon="comment-alt"></font-awesome-icon>
           </label>
         </li>
@@ -49,7 +55,7 @@
 
     <div :class="$style.content">
         <section>
-            <wikipedia-widget 
+          <wikipedia-widget 
             :highlighted-text="highlightedText">
           </wikipedia-widget>
         </section>
@@ -66,6 +72,9 @@
           :widget-name-prop="dictionaries"
           :current-widget="currentSection"
           ></oxford-dictionaries-widget>
+        </section>
+        <section>
+          <highlighter-widget></highlighter-widget>
         </section>
         <section>
           <feedback-widget></feedback-widget>

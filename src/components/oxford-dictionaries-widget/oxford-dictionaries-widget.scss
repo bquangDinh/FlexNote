@@ -1,29 +1,32 @@
+@use '../../assets/scss/base.scss' as base;
+
 .oxford_dictionaries_widget {
     &{
         width: 100%;
         height: 100%;
         overflow: hidden;
+        text-align: left;
     }
 
     .oxford_header{
         &{
             width: 100%;
-            color: black;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 18px;
+            @include base.normal-text;
         }
     }
 
     .oxford_entry{
         padding: 5px;
         border-radius: 10px;
-        background-color: #ecf0f1;
-        color: black;
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 18px;
+        background-color: base.$background-color;
+        @include base.normal-text;
 
         &:not(:first-child){
             margin-top: 10px;
+        }
+
+        .unheader_text{
+            font-weight: normal;
         }
     }
 
@@ -33,35 +36,28 @@
         width: calc(100% - 20px);
         padding: 10px;
         border: 0;
-        background-color: #3498db;
+        background-color: base.$primary-color;
         transition: background-color .3s;
-        color: white !important;
         cursor: pointer;
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 16px;
+        @include base.normal-text;
+        color: white !important;
 
-        &:hover, &:focus{
-            outline: 0;
-            background-color: darken(#3498db, 20%);
-        }
+        @include base.darker-when-hover(base.$primary-color, 20%);
 
         &.disable_search{
-            background-color: darken(#3498db, 50%);
+            background-color: darken(base.$primary-color, 50%);
             cursor: default;
         }
     }
 
     .text_input{
-        color: black;
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 18px;
+        @include base.normal-text;
         box-sizing: border-box;
         border-radius: 5px;
         margin: 0 10px;
         width: calc(100% - 20px);
         border: 1px solid gray;
-        background-color: #fdfdfd;
-        font-size: 1.1em;
+        background-color: base.$base-color;
         padding: 10px;
     }
 
@@ -70,22 +66,20 @@
             overflow: auto;
             width: 100%;
             height: calc(100% - 200px);
-            color: black;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 18px;
+            @include base.normal-text;
         }
 
         .show_warning_container{
             margin: 10px;
             padding: 10px;
-            color: #e74c3c;
-            background-color: #ecf0f1;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 18px;
+            
+            background-color: base.$background-color;
             border-radius: 5px;
-            -webkit-box-shadow: 1px 1px 6px 0px rgba(50, 50, 50, 0.75);
-            -moz-box-shadow:    1px 1px 6px 0px rgba(50, 50, 50, 0.75);
-            box-shadow:         1px 1px 6px 0px rgba(50, 50, 50, 0.75);
+            @include base.normal-text;
+
+            color: base.$warning-color;
+            
+            @include base.box-shadow;
         }
 
         .group{
@@ -93,9 +87,7 @@
 
             .group_header{
                 .title{
-                    color: black;
-                    font-family: Arial, Helvetica, sans-serif;
-                    font-size: 20px;
+                    @include base.medium-text;
                     font-weight: bold;
                 }
             }
@@ -104,13 +96,10 @@
                 margin-top: 5px;
                 padding: 10px;
                 min-height: 30px;
-                background-color: white;
+                background-color: base.$base-color;
                 border-radius: 5px;
-                font-family: Arial, Helvetica, sans-serif;
-                font-size: 18px;
-                -webkit-box-shadow: 1px 1px 6px 0px rgba(50, 50, 50, 0.75);
-                -moz-box-shadow:    1px 1px 6px 0px rgba(50, 50, 50, 0.75);
-                box-shadow:         1px 1px 6px 0px rgba(50, 50, 50, 0.75);
+                @include base.normal-text;
+                @include base.box-shadow;
             }
         }
     }

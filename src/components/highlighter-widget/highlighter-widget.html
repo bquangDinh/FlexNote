@@ -1,0 +1,20 @@
+<div :class="$style.highlighter_widget">
+  <div :class="$style.highlighter_group">
+    <div :class="$style.highlighter_header">
+      {{ pageURL }}
+    </div>
+    <div :class="$style.highlighter_list">
+      <span 
+        v-for="highlight in mainHighlightsList"
+        :key="highlight.id"
+        :class="$style[highlight.classColor]"
+        >
+        {{ highlight.content }}
+        <button :class="$style.remove_highlight_btn">
+          <font-awesome-icon icon="times"></font-awesome-icon>
+        </button>
+      </span>
+    </div>
+  </div>
+</div>
+

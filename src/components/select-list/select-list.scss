@@ -1,4 +1,4 @@
-$item-btn-color: #ecf0f1;
+@use '../../assets/scss/base.scss' as base;
 
 .select_list {
     .list{
@@ -8,15 +8,19 @@ $item-btn-color: #ecf0f1;
         }
 
         .item_btn{
-            background-color: $item-btn-color;
+            background-color: base.$primary-color;
             border-radius: 5px;
             border: 0;
             margin: 0 5px 0 5px;
             padding: 5px;
             cursor: pointer;
-            color: black;
-            font-size: 16px;
-            font-family: Arial, Helvetica, sans-serif;
+            transition: background-color .2s;
+            
+            @include base.normal-text;
+
+            color: white;
+
+            @include base.darker-when-hover(base.$primary-color, 20%);
         }
     }
 }

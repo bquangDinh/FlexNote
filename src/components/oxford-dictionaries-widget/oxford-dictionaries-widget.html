@@ -32,7 +32,7 @@
     v-for="lexicalEntry in lexicalEntries"
     :key="uid"
     >
-      <h4 style="margin-left: 10px;">{{ lexicalEntry.text }} | Lexical Form: {{ lexicalEntry.lexicalCategory.text }}</h4>
+      <h4 style="margin-left: 10px;">{{ lexicalEntry.text }}<span :class="$style.unheader_text"> | Lexical Form: {{ lexicalEntry.lexicalCategory.text }}</span></h4>
       <p  style="margin-left: 10px;">Provider: Oxford University Press</p>
       <hr>
 
@@ -40,7 +40,6 @@
       <div :class="$style.group" v-if="typeof lexicalEntry.entries[0].senses !== 'undefined'">
         <div :class="$style.group_header">
           <div :class="$style.title">Senses</div>
-          <i>Definitions of the word.</i>
         </div>
         <div 
         :class="$style.content" 
@@ -94,7 +93,6 @@
       <div :class="$style.group" v-if="typeof lexicalEntry.entries[0].pronunciations !== 'undefined'">
         <div :class="$style.group_header">
           <div :class="$style.title">Pronunciations</div>
-          <i>Pronunciation is the way in which a word or a language is spoken.</i>
         </div>
         <div 
         :class="$style.content" 
@@ -132,7 +130,6 @@
       <div :class="$style.group" v-if="typeof lexicalEntry.entries[0].etymologies !== 'undefined'">
         <div :class="$style.group_header">
           <div :class="$style.title">Etymologies</div>
-          <i>Etymologies is the study of the origin of words and the way in which their meanings have changed throughout history.</i>
         </div>
         <div :class="$style.content">
           <p v-for="etymology in lexicalEntry.entries[0].etymologies">

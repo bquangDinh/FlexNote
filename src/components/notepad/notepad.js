@@ -2,6 +2,7 @@
 import WikipediaWidget from '../wikipedia-widget/index.vue';
 import TranslateWidget from '../translate-widget/index.vue';
 import OxfordDictionariesWidget from '../oxford-dictionaries-widget/index.vue';
+import HighlighterWidget from '../highlighter-widget/index';
 import FeedbackWidget from '../feedback-widget/index.vue';
 
 export default {
@@ -10,6 +11,7 @@ export default {
     WikipediaWidget,
     TranslateWidget,
     OxfordDictionariesWidget,
+    HighlighterWidget,
     FeedbackWidget
   },
   props: {

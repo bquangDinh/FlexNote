@@ -1,10 +1,10 @@
-<div :class="$style.log">
-  <button :class="[$style.hide_log_btn, !isShowing ? $style.expand : '']" @click="isShowing = !isShowing">
+<div :class="$style.wikipedia_widget_footer">
+  <button :class="[$style.hide_footer_btn, !isShowing ? $style.expand : '']" @click="isShowing = !isShowing">
     <font-awesome-icon icon="eye-slash" v-if="isShowing == true" key="icon-showing"></font-awesome-icon>
     <font-awesome-icon icon="external-link-alt" v-else key="icon-showing"></font-awesome-icon>
   </button>
-  <div :class="[$style.log_container, !isShowing ? $style.hide : '']">
-    <div :class="$style.log_header">
+  <div :class="[$style.footer_container, !isShowing ? $style.hide : '']">
+    <div :class="$style.footer_header">
       <span>
         Selected text
       </span>
