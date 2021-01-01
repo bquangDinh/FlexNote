@@ -217,7 +217,7 @@ chrome.runtime.onMessage.addListener(
                 if(request.menuId === 'other') highlightColor = HIGHLIGHT_STYLES.OTHER.NAME;
 
                 //highlight the text
-                HighlightHandler.highlightSelection(highlightColor);
+                HighlightHandler.highlightSelection(request.selectionText, highlightColor);
             }
         }
     }
@@ -305,7 +305,7 @@ function openFlexpad(highlightedText){
 
 function quickHighlight(highlightedText){
     //highlight the text with default color
-    HighlightHandler.highlightSelection();
+    HighlightHandler.highlightSelection(highlightedText);
 }
 
 /*Initialize SelectionMenu*/

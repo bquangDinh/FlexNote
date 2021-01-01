@@ -1,6 +1,8 @@
+import { faSketch } from '@fortawesome/free-brands-svg-icons';
 import rangy from 'rangy/lib/rangy-core';
 require('rangy/lib/rangy-classapplier');
 require('rangy/lib/rangy-highlighter');
+import { v4 as uuidv4 } from 'uuid';
 
 export const HIGHLIGHT_COLORS = {
     IMPORTANT: {
@@ -32,6 +34,7 @@ export const HIGHLIGHT_COLORS = {
 
 export const HIGHLIGHT_STYLES = {
     IMPORTANT: {
+        CSS_SELECTOR: "[class*='highlight-flexnote--important-']",
         NAME: 'highlight-flexnote--important',
         STYLE: `
             background   : ${HIGHLIGHT_COLORS.IMPORTANT.BACKGROUND_COLOR};
@@ -45,6 +48,7 @@ export const HIGHLIGHT_STYLES = {
         `
     },
     REVIEW: {
+        CSS_SELECTOR: "[class*='highlight-flexnote--review-']",
         NAME: 'highlight-flexnote--review',
         STYLE: `
             background   : ${HIGHLIGHT_COLORS.REVIEW.BACKGROUND_COLOR};
@@ -58,6 +62,7 @@ export const HIGHLIGHT_STYLES = {
         `
     },
     TERM: {
+        CSS_SELECTOR: "[class*='highlight-flexnote--term-']",
         NAME: 'highlight-flexnote--term',
         STYLE: `
             background   : ${HIGHLIGHT_COLORS.TERM.BACKGROUND_COLOR};
@@ -71,6 +76,7 @@ export const HIGHLIGHT_STYLES = {
         `
     },
     OTHER: {
+        CSS_SELECTOR: "[class*='highlight-flexnote--other-']",
         NAME: 'highlight-flexnote--other',
         STYLE: `
             background   : ${HIGHLIGHT_COLORS.OTHER.BACKGROUND_COLOR};
@@ -84,6 +90,7 @@ export const HIGHLIGHT_STYLES = {
         `
     },
     EXAMPLE: {
+        CSS_SELECTOR: "[class*='highlight-flexnote--example-']",
         NAME: 'highlight-flexnote--example',
         STYLE: `
             background   : ${HIGHLIGHT_COLORS.EXAMPLE.BACKGROUND_COLOR};
@@ -113,6 +120,19 @@ export const HighlightHandler = (function(){
         console.log('Restored highlights');
     }
 
+    function addClassApplierToHighlighter(className, options){
+        if(!highlighter){
+            console.error('Highlighter is not initialized');
+            return false;
+        }
+
+        let classApplier = rangy.createClassApplier(className, options);
+
+        highlighter.addClassApplier(classApplier);
+
+        return classApplier;
+    }
+
     /*Google Storage for Highlight*/
     var HighlightChromeStorage = (function(){
         let HIGHLIGHTS_STORAGE_KEY = 'highlight_storage';
@@ -130,15 +150,23 @@ export const HighlightHandler = (function(){
                 chrome.storage.sync.get(function(cfg){
                     console.log(cfg);
 
+                    let idAsKey = highlightInfo.id;
+
+                    if(idAsKey === null){
+                        console.error('Highlight doesnt have an id');
+                        return false;
+                    }
+
                     if(typeof cfg[urlAsKey] === 'undefined') cfg[urlAsKey] = {};
 
                     if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] !== 'undefined'){
                         cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] = rangySerialized;
-                        cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY].push(highlightInfo);
+                        cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY][idAsKey] = highlightInfo;
                     }else{
                         cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] = {};
                         cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] = rangySerialized;
-                        cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY] = [highlightInfo];
+                        cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY] = {};
+                        cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY][idAsKey] = highlightInfo;
                     }
 
                     chrome.storage.sync.set(cfg, function(){
@@ -150,12 +178,10 @@ export const HighlightHandler = (function(){
                 });
             },
             removeHighlightSelectionFromStorage: function(element, callback = null){
-                if(!highlighter){
-                    console.error('Highlighter is not initialized');
-                    return false;
-                }
-
                 let highlight = highlighter.getHighlightForElement(element);
+                let idAsKey = element.id;
+
+                console.log('Removing with id ', idAsKey);
 
                 if(highlight){
                     highlighter.removeHighlights([highlight]);
@@ -174,10 +200,13 @@ export const HighlightHandler = (function(){
                             return false;
                         }
                         
-                        //TODO: update highlight info
+                        //TODO: remove highlight info
+                        delete cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY][idAsKey];
+
+                        //update rangySerialized string
                         cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] = newSerialize;
 
-                        chrome.storage.sync.get(cfg, function(){
+                        chrome.storage.sync.set(cfg, function(){
                             console.log('Removed a highlight');
 
                             if(typeof callback === 'function'){
@@ -212,6 +241,20 @@ export const HighlightHandler = (function(){
 
                     console.log('Loaded rangy', rangy);
 
+                    //load all the style of existing highlights
+                    let highlights = cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY];
+
+                    Object.keys(highlights).forEach(key => {
+                        console.log(highlights[key]);
+                        addClassApplierToHighlighter(highlights[key].classSelectorId, {
+                            ignoreWhiteSpace: true,
+                            onElementCreate: function(el, cl){
+                                el.id = highlights[key].id;
+                                el.classList.add('highlight-flexnote');
+                            }
+                        })
+                    });
+
                     //restore highlights
                     restoreHighlights(rangy);
                 });
@@ -234,23 +277,27 @@ export const HighlightHandler = (function(){
 
             /*Load all styles to Highlighter Class Applier*/
             let style = document.createElement('style');
-
+            
             Object.keys(HIGHLIGHT_STYLES).forEach(key => {
+                let classSelector = HIGHLIGHT_STYLES[key].CSS_SELECTOR;
                 let className = HIGHLIGHT_STYLES[key].NAME;
                 let classContent = HIGHLIGHT_STYLES[key].STYLE;
-                let classApplier = rangy.createClassApplier(className, {
-                    ignoreWhiteSpace: true,
-                    onElementCreate: function(el, cl){
-                        if(el){
-                            //TODO: add variable instead
-                            el.classList.add('highlight-flexnote');
-                        }
-                    }
-                });
-                highlighter.addClassApplier(classApplier);
+                //let classApplier = rangy.createClassApplier(className, {
+                //    ignoreWhiteSpace: true,
+                //    onElementCreate: function(el, cl){
+                //        console.log(cl);
+                //        if(el){
+                //            //TODO: add variable instead
+                //            console.log('Owned by global');
+                //            el.classList.add('highlight-flexnote');
+                //            el.id = 'highlight-' + uuid;
+                //        }
+                //    }
+                //});
+                //highlighter.addClassApplier(classApplier);
 
                 style.textContent += `
-                    .${className}{
+                    ${classSelector}{
                         ${classContent}
                     }
                 `;
@@ -262,19 +309,35 @@ export const HighlightHandler = (function(){
             /*Load all existing highlights which are stored in Chrome Storage*/
             HighlightChromeStorage.loadHighlightsFromStorage();
         },
-        highlightSelection: function(highlightColorClass = HIGHLIGHT_STYLES.REVIEW.NAME){
+        highlightSelection: function(highlightedText, highlightColorClass = HIGHLIGHT_STYLES.REVIEW.NAME){
             if(!highlighter){
                 console.error('Highlighter is not initialized');
                 return false;
             }
             
-            /*Make selection*/
-            highlighter.highlightSelection(highlightColorClass);
+            //generate a new id
+            let uuid = uuidv4();
+            let classSelectorId = highlightColorClass + '-' + uuid;
 
-            /*Serialize all highlights and save to Chrome Storage*/
+            //create a new class applier for this element only
+            addClassApplierToHighlighter(classSelectorId, {
+                ignoreWhiteSpace: true,
+                onElementCreate: function(el, cl){
+                    el.id = uuid;
+                    el.classList.add('highlight-flexnote');
+                }
+            });
+
+            highlighter.highlightSelection(classSelectorId);
+
             let serialized = highlighter.serialize();
 
-            HighlightChromeStorage.addHighlightSelectionToStorage('Test', serialized);
+            HighlightChromeStorage.addHighlightSelectionToStorage({
+                content: highlightedText,
+                color: highlightColorClass,
+                id: uuid,
+                classSelectorId: classSelectorId
+            }, serialized);
         },  
         unhighlightSelection: function(element){
             HighlightChromeStorage.removeHighlightSelectionFromStorage(element);
