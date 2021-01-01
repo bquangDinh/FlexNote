@@ -36,19 +36,59 @@
       <p  style="margin-left: 10px;">Provider: Oxford University Press</p>
       <hr>
 
-      <!--Etymologies-->
-      <div :class="$style.group" v-if="typeof lexicalEntry.entries[0].etymologies !== 'undefined'">
+      <!--Senses-->
+      <div :class="$style.group" v-if="typeof lexicalEntry.entries[0].senses !== 'undefined'">
         <div :class="$style.group_header">
-          <div :class="$style.title">Etymologies</div>
-          <i>Etymologies is the study of the origin of words and the way in which their meanings have changed throughout history.</i>
+          <div :class="$style.title">Senses</div>
+          <i>Definitions of the word.</i>
         </div>
-        <div :class="$style.content">
-          <p v-for="etymology in lexicalEntry.entries[0].etymologies">
-            {{ etymology }}
-          </p>
+        <div 
+        :class="$style.content" 
+        v-for="sense in lexicalEntry.entries[0].senses"
+        >
+        <!--definitions-->
+        <div v-if="typeof sense.definitions !== 'undefined'">
+          <h5>Definitions</h5>
+          <div>
+            <div 
+            v-for="def in sense.definitions"
+            style="display: list-item; list-style-position: inside; list-style: circle; margin-left: 20px;"
+            >
+              {{ def }}
+            </div>
+          </div>
+        </div>
+
+        <!--examples-->
+        <div v-if="typeof sense.examples !== 'undefined'">
+          <h5>Examples</h5>
+          <div style="width: 100%;">
+            <div 
+            v-for="example in sense.examples" 
+            style="display: list-item; list-style-position: inside; list-style: square; margin-left: 20px;"
+            >
+              <i>{{ example.text }}</i>
+            </div>
+          </div>
+        </div>
+
+        <!--sub senses-->
+        <div v-if="typeof sense.subsenses !== 'undefined'">
+          <h5>Sub-definitions</h5>
+          <div style="width: 100%;">
+            <div 
+            v-for="subsense in sense.subsenses" 
+            style="display: list-item; list-style-position: inside; list-style: circle; margin-left: 20px;"
+            >
+              <p v-if="typeof subsense.definitions !== 'undefined'"><b>{{ subsense.definitions[0] }}</b></p>
+              <i v-if="typeof subsense.examples !== 'undefined'">Example: {{ subsense.examples[0].text }}</i>
+            </div>
+          </div>
+        </div>  
+        
         </div>
       </div>
-      <!--END Etymologies-->
+      <!--END Senses-->
       <br>
       <!--Pronunciations-->
       <div :class="$style.group" v-if="typeof lexicalEntry.entries[0].pronunciations !== 'undefined'">
@@ -88,59 +128,19 @@
       </div>
       <!--END Pronunciations-->
       <br>
-      <!--Senses-->
-      <div :class="$style.group" v-if="typeof lexicalEntry.entries[0].senses !== 'undefined'">
+      <!--Etymologies-->
+      <div :class="$style.group" v-if="typeof lexicalEntry.entries[0].etymologies !== 'undefined'">
         <div :class="$style.group_header">
-          <div :class="$style.title">Senses</div>
-          <i>Definitions of the word.</i>
+          <div :class="$style.title">Etymologies</div>
+          <i>Etymologies is the study of the origin of words and the way in which their meanings have changed throughout history.</i>
         </div>
-        <div 
-        :class="$style.content" 
-        v-for="sense in lexicalEntry.entries[0].senses"
-        >
-        <!--definitions-->
-        <div v-if="typeof sense.definitions !== 'undefined'">
-          <h5>Definitions</h5>
-          <div>
-            <div 
-            v-for="def in sense.definitions"
-            style="display: list-item; list-style-position: inside; list-style: circle; margin-left: 20px;"
-            >
-              {{ def }}
-            </div>
-          </div>
-        </div>
-
-        <!--examples-->
-        <div v-if="typeof sense.examples !== 'undefined'">
-          <h5>Examples</h5>
-          <div style="width: 100%;">
-            <div 
-            v-for="example in sense.examples" 
-            style="display: list-item; list-style-position: inside; list-style: circle; margin-left: 20px;"
-            >
-              <i>{{ example.text }}</i>
-            </div>
-          </div>
-        </div>
-
-        <!--sub senses-->
-        <div v-if="typeof sense.subsenses !== 'undefined'">
-          <h5>Sub-definitions</h5>
-          <div style="width: 100%;">
-            <div 
-            v-for="subsense in sense.subsenses" 
-            style="display: list-item; list-style-position: inside; list-style: circle; margin-left: 20px;"
-            >
-              <p v-if="typeof subsense.definitions !== 'undefined'"><b>{{ subsense.definitions[0] }}</b></p>
-              <i v-if="typeof subsense.examples !== 'undefined'">Example: {{ subsense.examples[0].text }}</i>
-            </div>
-          </div>
-        </div>  
-        
+        <div :class="$style.content">
+          <p v-for="etymology in lexicalEntry.entries[0].etymologies">
+            {{ etymology }}
+          </p>
         </div>
       </div>
-      <!--END Senses-->
+      <!--END Etymologies-->
 
       <!--
       <div :class="$style.group" v-if="lexicalEntry.entries">

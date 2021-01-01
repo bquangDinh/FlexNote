@@ -1,4 +1,10 @@
 .translate_widget {
+    .group{
+        color: black;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 18px;
+    }
+
     .textarea_input{
         box-sizing: border-box;
         border-radius: 5px;
@@ -9,11 +15,6 @@
         background-color: #fdfdfd;
         font-size: 1.1em;
         padding: 10px;
-    }
-
-    *{
-        color: black;
-        font-family: Helvetica, sans-serif;
     }
 
     .title_controller{
@@ -43,6 +44,9 @@
     .exceed_words_limit_warning{
         &{
             margin: 0 10px 10px 10px;
+            color: black;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 18px;
         }
 
         h3{
