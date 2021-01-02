@@ -51,7 +51,7 @@ export async function searchOnOxford(sourceLang, text){
     headers.append('app_key', OXFORD_DICTIONARIES_API_KEY);
     headers.append('app_id', OXFORD_DICTIONARIES_API_APP_ID);
     
-    let request = new Request(APP_PROXY_HOST + apiURL, {
+    let request = new Request(apiURL, {
         method: 'GET',
         headers: new Headers({
             'Accept': 'application/json',

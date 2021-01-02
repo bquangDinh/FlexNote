@@ -1,4 +1,4 @@
-<div :class="$style.notepad" :style="styleObject" v-if="isNotePadShowing">
+<div :class="$style.notepad" :style="styleObject" v-if="isNotePadShowing" ref="flexpad">
   <div :class="[$style.draggable_header, dragging.isDragging ? $style.dragging : '']" @mousedown="mousedown" @mousemove="mousemove" @mouseup="mouseup"></div>
   
   <button :id="$style.close_button" @click="closeNotePad">

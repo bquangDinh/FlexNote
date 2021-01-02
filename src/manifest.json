@@ -4,7 +4,7 @@
   "homepage_url": "http://localhost:8080/",
   "description": "Select a text and open a Wikipedia pop up right inside your page, support Google Translation and Oxford Dictionaries",
   "default_locale": "en",
-  "version": "0.0.0.1",
+  "version": "0.1.1",
   "permissions": [
     "storage",
     "contextMenus"

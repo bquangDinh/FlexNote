@@ -3,14 +3,93 @@
     <div :class="$style.highlighter_header">
       {{ pageURL }}
     </div>
-    <div :class="$style.highlighter_list">
+    <div :class="$style.highlighter_guideline_container" v-if="isHighlightEmpty">
+      <div :class="$style.title">
+        You don't have any highlights. Time to use your powerful Flexpad Highlighter!
+      </div>
+      <ol :class="$style.guideline">
+        <li>Highlight a text to highlight</li>
+        <li>Click <b>'Quick Highlight'</b> to quickly highlight a text with <b>yellow color</b> from the pop-up that is appeared when you select a text</li>
+        <li>Right-click on the text which is being highlighted > click 'Select Highlight Color' from the browser's menu > select your prefered color. I offered 5 beautiful colors for each usecase</li>
+        <li>Click on the highlighted text to quickly open the Flexpad. Flexpad will use the highlighted content to load data</li>
+        <li>Double-click on the highlighted text to quickly remove the highlight</p>
+        <li>You can review your highlights in Highlight tab in Flexpad. Click on the highlight will bring you to the highlight's location on the page, make it easier if you want to see your highlight immediately</li>
+        <li style="color: #e74c3c"><b>NOTICE:</b> Highlighter is not working on dynamic website which is the content of the web will be rendered dynamically. But don't worry, most of the webs nowadays are still static websites</li>
+        <li>You can still review your highlights even if Flexpad cannot render them on the page next time you visit the web.</li>
+      </ol>
+    </div>
+    <div :class="$style.highlighter_list" v-else>
       <span 
-        v-for="highlight in mainHighlightsList"
+        v-for="highlight in mainHighlightsList.importants"
         :key="highlight.id"
         :class="$style[highlight.classColor]"
+        @click="scrollToHighlight(highlight.id)"
         >
         {{ highlight.content }}
-        <button :class="$style.remove_highlight_btn">
+        <button 
+        :class="$style.remove_highlight_btn"
+        @click="removeHighlight(highlight.id)"
+        >
+          <font-awesome-icon icon="times"></font-awesome-icon>
+        </button>
+      </span>
+
+      <span 
+        v-for="highlight in mainHighlightsList.reviews"
+        :key="highlight.id"
+        :class="$style[highlight.classColor]"
+        @click="scrollToHighlight(highlight.id)"
+        >
+        {{ highlight.content }}
+        <button 
+        :class="$style.remove_highlight_btn"
+        @click="removeHighlight(highlight.id)"
+        >
+          <font-awesome-icon icon="times"></font-awesome-icon>
+        </button>
+      </span>
+
+      <span 
+        v-for="highlight in mainHighlightsList.terms"
+        :key="highlight.id"
+        :class="$style[highlight.classColor]"
+        @click="scrollToHighlight(highlight.id)"
+        >
+        {{ highlight.content }}
+        <button 
+        :class="$style.remove_highlight_btn"
+        @click="removeHighlight(highlight.id)"
+        >
+          <font-awesome-icon icon="times"></font-awesome-icon>
+        </button>
+      </span>
+
+      <span 
+        v-for="highlight in mainHighlightsList.examples"
+        :key="highlight.id"
+        :class="$style[highlight.classColor]"
+        @click="scrollToHighlight(highlight.id)"
+        >
+        {{ highlight.content }}
+        <button 
+        :class="$style.remove_highlight_btn"
+        @click="removeHighlight(highlight.id)"
+        >
+          <font-awesome-icon icon="times"></font-awesome-icon>
+        </button>
+      </span>
+
+      <span 
+        v-for="highlight in mainHighlightsList.others"
+        :key="highlight.id"
+        :class="$style[highlight.classColor]"
+        @click="scrollToHighlight(highlight.id)"
+        >
+        {{ highlight.content }}
+        <button 
+        :class="$style.remove_highlight_btn"
+        @click="removeHighlight(highlight.id)"
+        >
           <font-awesome-icon icon="times"></font-awesome-icon>
         </button>
       </span>

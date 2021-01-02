@@ -32,6 +32,16 @@ export default {
       immediate: true,
       handler (val, oldVal){
         this.isNotePadShowing = val;
+        this.dragging.isDragging = false;
+        
+        if(val){
+          if(this.isFlexpadOutOfScreen()){
+            this.styleObject = {
+              top: '20px',
+              left: '55vw'
+            };
+          }
+        }
       }
     },
     highlightedText: {
@@ -67,7 +77,7 @@ export default {
 
   },
   mounted () {
-
+    
   },
   methods: {
     /*Dragging Events*/
@@ -102,6 +112,21 @@ export default {
     },
     mouseup: function(e){
       this.dragging.isDragging = false;
+    },
+    isFlexpadOutOfScreen: function(){
+      let x = parseInt(this.styleObject.left.replace('px', ''));
+      let y = parseInt(this.styleObject.top.replace('px', ''));
+
+      console.log(x,y);
+
+      if(x < 0 || 
+        x > window.screen.width ||
+        y < 0 ||
+        y > window.screen.height){
+          return true;
+        }
+
+        return false;
     },
     /*Button Events*/
     changeSection: function(sectionName){

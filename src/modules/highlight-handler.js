@@ -116,8 +116,6 @@ export const HighlightHandler = (function(){
         }
 
         highlighter.deserialize(serializedRangy);
-
-        console.log('Restored highlights');
     }
 
     function addClassApplierToHighlighter(className, options){
@@ -138,6 +136,7 @@ export const HighlightHandler = (function(){
         let HIGHLIGHTS_STORAGE_KEY = 'highlight_storage';
         let HIGHLIGHTS_LIST_KEY = 'highlights';
         let HIGHLIGHTS_RANGY_SERIALIZED = 'rangy';
+        let HIGHLIGHT_RECENT_REMOVED = 'highlight_removed';
         let urlAsKey = window.location.href;
 
         if(typeof chrome.storage === 'undefined'){
@@ -148,8 +147,6 @@ export const HighlightHandler = (function(){
         return {
             addHighlightSelectionToStorage: function(highlightInfo, rangySerialized, callback){
                 chrome.storage.sync.get(function(cfg){
-                    console.log(cfg);
-
                     let idAsKey = highlightInfo.id;
 
                     if(idAsKey === null){
@@ -170,9 +167,7 @@ export const HighlightHandler = (function(){
                     }
 
                     chrome.storage.sync.set(cfg, function(){
-                        //TODO: remove console.log, and call callback only
-                        console.log('Saved highlight to Chrome Storage');
-                        
+                        //TODO: remove console.log, and call callback only                     
                         if(typeof callback === 'function') callback();
                     });
                 });
@@ -180,8 +175,6 @@ export const HighlightHandler = (function(){
             removeHighlightSelectionFromStorage: function(element, callback = null){
                 let highlight = highlighter.getHighlightForElement(element);
                 let idAsKey = element.id;
-
-                console.log('Removing with id ', idAsKey);
 
                 if(highlight){
                     highlighter.removeHighlights([highlight]);
@@ -207,8 +200,6 @@ export const HighlightHandler = (function(){
                         cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED] = newSerialize;
 
                         chrome.storage.sync.set(cfg, function(){
-                            console.log('Removed a highlight');
-
                             if(typeof callback === 'function'){
                                 callback();
                             }
@@ -239,13 +230,10 @@ export const HighlightHandler = (function(){
 
                     let rangy = cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_RANGY_SERIALIZED];
 
-                    console.log('Loaded rangy', rangy);
-
                     //load all the style of existing highlights
                     let highlights = cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY];
 
                     Object.keys(highlights).forEach(key => {
-                        console.log(highlights[key]);
                         addClassApplierToHighlighter(highlights[key].classSelectorId, {
                             ignoreWhiteSpace: true,
                             onElementCreate: function(el, cl){
@@ -257,6 +245,33 @@ export const HighlightHandler = (function(){
 
                     //restore highlights
                     restoreHighlights(rangy);
+                });
+            },
+            getHighlightContentFromStorage: function(highlightId, callback){
+                chrome.storage.sync.get(function(cfg){
+                    if(typeof cfg[urlAsKey] === 'undefined'){
+                        console.warn('Storage empty');
+                        return false;
+                    }
+
+                    if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY] === 'undefined'){
+                        console.warn('No highlight storage found');
+                        return false;
+                    }
+
+                    if(typeof cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY] === 'undefined'){
+                        console.warn('No highlights found');
+                        return false;
+                    }
+
+                    if(typeof callback !== 'function'){
+                        console.error('Callback function is invalid');
+                        return false;
+                    }
+
+                    let contentOfHighlight = cfg[urlAsKey][HIGHLIGHTS_STORAGE_KEY][HIGHLIGHTS_LIST_KEY][highlightId]['content'];
+
+                    callback(contentOfHighlight);
                 });
             }
         }
@@ -341,6 +356,9 @@ export const HighlightHandler = (function(){
         },  
         unhighlightSelection: function(element){
             HighlightChromeStorage.removeHighlightSelectionFromStorage(element);
+        },
+        getContentOfHighlight: function(highlightId, callback){
+            HighlightChromeStorage.getHighlightContentFromStorage(highlightId, callback);
         }
     };
 })();

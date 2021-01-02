@@ -183,14 +183,21 @@ var App = new Vue({
 document.onreadystatechange = function(){
     var state = document.readyState;
 
-    if(state === 'complete'){
-        console.log('loaded');
-        
+    if(state === 'complete'){       
         HighlightHandler.initialize();
     }
 }
 
 /*Initialize highlight click event*/
+delegate(document, 'click', '.highlight-flexnote', function(e){
+    //Open Flexpad
+    let highlightId = e.target.id;
+
+    HighlightHandler.getContentOfHighlight(highlightId, function(content){
+        openFlexpad(content);
+    });
+});
+
 delegate(document, 'dblclick', '.highlight-flexnote', function(e){
     HighlightHandler.unhighlightSelection(this);
 });
@@ -223,6 +230,20 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
+chrome.storage.onChanged.addListener(function(changes, namespace){
+    let urlAsKey = window.location.href;
+    let HIGHLIGHT_RECENT_REMOVED = 'highlight_removed';
+    let HIGHLIGHTS_STORAGE_KEY = 'highlight_storage';
+
+    let removedHighlightId = changes[urlAsKey].newValue[HIGHLIGHTS_STORAGE_KEY][HIGHLIGHT_RECENT_REMOVED];
+    
+    let element = document.getElementById(removedHighlightId);
+
+    if(element){
+        HighlightHandler.unhighlightSelection(element);
+    }
+});
+
 /*Create an interactive menu*/
 var COMMANDS_LIST = {
     OPEN_FLEXPAD: 'open-flexpad',
@@ -236,7 +257,6 @@ menuContainer.id = menuID;
 menuContainer.innerHTML = `
     <button class='menu-btn' data-command='${COMMANDS_LIST.OPEN_FLEXPAD}'>Open Flexpad</button>
     <button class='menu-btn'data-command='${COMMANDS_LIST.HIGHLIGHT}'>Quick Highlight</button>
-    <button class='menu-btn' data-command='${COMMANDS_LIST.ADD_NOTE}'>Add Note</button>
 `;
 
 /*Menu Style*/
@@ -271,29 +291,8 @@ menyStyle.textContent = `
     }
 `;
 
-/*Create interactive button*/
-var showNotePadButtonID = APP_NAME + '-btn' + generateID('-');
-var showNotePadButton = document.createElement('button');
-showNotePadButton.id = showNotePadButtonID;
-showNotePadButton.innerHTML = 'Open Flexpad';
 
-/*Button Style*/
-let buttonStyle = document.createElement('style');
-
-buttonStyle.textContent = `
-    #${showNotePadButtonID}{
-        padding: 10px;
-        border-radius: 10px;
-        border: 0;
-        -webkit-box-shadow: 1px 1px 6px 0px rgba(50, 50, 50, 0.75);
-        -moz-box-shadow:    1px 1px 6px 0px rgba(50, 50, 50, 0.75);
-        box-shadow:         1px 1px 6px 0px rgba(50, 50, 50, 0.75);
-    }
-`;
-
-/*Append button to shadow DOM*/
-//shadow.appendChild(buttonStyle);
-//shadow.appendChild(showNotePadButton);
+/*Append menu to shadow DOM*/
 shadow.appendChild(menyStyle);
 shadow.appendChild(menuContainer);
 
