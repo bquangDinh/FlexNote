@@ -145,7 +145,8 @@ var App = new Vue({
     data: function(){
         return {
             userHighlightedText: '',
-            showNotePad: false
+            showNotePad: false,
+            initialSection: 'wiki'
         }
     },
     methods: {
@@ -153,9 +154,10 @@ var App = new Vue({
          * Show and change the notepad's data via the highlighting text
          * @param {String} highlightedText the text which the user is highlighting on the web
          */
-        runNotePad: function(highlightedText = ''){
+        runNotePad: function(highlightedText = '', initialSection = 'wiki'){
             this.showNotePad = true;
             this.userHighlightedText = highlightedText;
+            this.initialSection = initialSection;
         }
     },
     mounted: function(){
@@ -171,7 +173,8 @@ var App = new Vue({
             , {
             props: {
                 showNotePad: self.showNotePad,
-                highlightedText: self.userHighlightedText
+                highlightedText: self.userHighlightedText,
+                initialWidget: self.initialSection
             },
             ref: 'myNotePad',
         })
@@ -248,7 +251,11 @@ chrome.storage.onChanged.addListener(function(changes, namespace){
 var COMMANDS_LIST = {
     OPEN_FLEXPAD: 'open-flexpad',
     HIGHLIGHT: 'highlight',
-    ADD_NOTE: 'add-note'
+    ADD_NOTE: 'add-note',
+    WIKI: 'open-wiki',
+    TRANSLATE: 'open-translate',
+    DICTIONARIES: 'open-dictionaries',
+    HIGHLIGHTER: 'open-highlighter'
 };
 
 var menuID = APP_NAME + '-menu' + generateID('-');
@@ -257,6 +264,11 @@ menuContainer.id = menuID;
 menuContainer.innerHTML = `
     <button class='menu-btn' data-command='${COMMANDS_LIST.OPEN_FLEXPAD}'>Open Flexpad</button>
     <button class='menu-btn'data-command='${COMMANDS_LIST.HIGHLIGHT}'>Quick Highlight</button>
+    <hr>
+    <button class='menu-btn' data-command='${COMMANDS_LIST.TRANSLATE}'>Translate</button>
+    <button class='menu-btn' data-command='${COMMANDS_LIST.WIKI}'>Look up Wikipedia</button>
+    <button class='menu-btn' data-command='${COMMANDS_LIST.DICTIONARIES}'>Look up Oxford Dictionaries</button>
+    <button class='menu-btn' data-command='${COMMANDS_LIST.HIGHLIGHTER}'>Open Highlighter</button>
 `;
 
 /*Menu Style*/
@@ -281,7 +293,6 @@ menyStyle.textContent = `
         border: 0;
         padding: 5px;
         cursor: pointer;
-        transition: all .3s;
         font-family: Arial, sans-serif;
     }
 
@@ -297,9 +308,9 @@ shadow.appendChild(menyStyle);
 shadow.appendChild(menuContainer);
 
 /*Menu Click Events*/
-function openFlexpad(highlightedText){
+function openFlexpad(highlightedText, section = 'wiki'){
     highlightedText = preprocessText(highlightedText);
-    App.runNotePad(highlightedText);
+    App.runNotePad(highlightedText, section);
 }
 
 function quickHighlight(highlightedText){
@@ -318,7 +329,24 @@ new SelectionMenu({
         let command = e.target.dataset.command;
 
         if(command === COMMANDS_LIST.OPEN_FLEXPAD){
-            openFlexpad(this.selectedText);
+            openFlexpad(this.selectedText, 'wiki');
+        }
+
+
+        if(command === COMMANDS_LIST.WIKI){
+            openFlexpad(this.selectedText, 'wiki');
+        }
+
+        if(command === COMMANDS_LIST.TRANSLATE){
+            openFlexpad(this.selectedText, 'translate');
+        }
+
+        if(command === COMMANDS_LIST.DICTIONARIES){
+            openFlexpad(this.selectedText, 'dictionaries');
+        }
+
+        if(command === COMMANDS_LIST.HIGHLIGHTER){
+            openFlexpad(this.selectedText, 'highlighter');
         }
 
         if(command === COMMANDS_LIST.HIGHLIGHT){

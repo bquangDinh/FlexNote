@@ -25,6 +25,12 @@ export default {
       validator: function(value){
         return value.trim() !== '';
       }
+    },
+    initialWidget: {
+      type: String,
+      validator: function(value){
+        return value === 'wiki' || value === 'translate' || value === 'dictionaries' || value === 'highlighter' || value === 'feedback';
+      }
     }
   },
   watch: {
@@ -49,6 +55,13 @@ export default {
       handler (val, oldVal){
       }
     },
+    initialWidget: {
+      immediate: true,
+      handler (val, oldVal){
+        console.log(this.initialWidget);
+        this.currentSection = val;
+      }
+    }
   },
   data: function() {
     return {
@@ -70,7 +83,7 @@ export default {
         left: '55vw'
       },
       isNotePadShowing: this.showNotePad,
-      currentSection: 'wiki',
+      currentSection: this.initialWidget,
     }
   },
   computed: {
@@ -116,9 +129,7 @@ export default {
     isFlexpadOutOfScreen: function(){
       let x = parseInt(this.styleObject.left.replace('px', ''));
       let y = parseInt(this.styleObject.top.replace('px', ''));
-
-      console.log(x,y);
-
+      
       if(x < 0 || 
         x > window.screen.width ||
         y < 0 ||

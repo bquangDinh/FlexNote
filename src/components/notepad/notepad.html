@@ -1,4 +1,4 @@
-<div :class="$style.notepad" :style="styleObject" v-if="isNotePadShowing" ref="flexpad">
+<div :class="$style.notepad" :style="styleObject" v-show="isNotePadShowing" ref="flexpad">
   <div :class="[$style.draggable_header, dragging.isDragging ? $style.dragging : '']" @mousedown="mousedown" @mousemove="mousemove" @mouseup="mouseup"></div>
   
   <button :id="$style.close_button" @click="closeNotePad">
@@ -6,11 +6,11 @@
   </button>
 
   <div :class="$style.tabs">
-    <input type="radio" :id="$style.tab1" name="tab-control" checked>
-    <input type="radio" :id="$style.tab2" name="tab-control">
-    <input type="radio" :id="$style.tab3" name="tab-control">
-    <input type="radio" :id="$style.tab4" name="tab-control">
-    <input type="radio" :id="$style.tab5" name="tab-control">
+    <input type="radio" :id="$style.tab1" name="tab-control" :checked="initialWidget === 'wiki'"> <!--WIKIPEDIA-->
+    <input type="radio" :id="$style.tab2" name="tab-control" :checked="initialWidget === 'translate'"> <!--TRANSLATE-->
+    <input type="radio" :id="$style.tab3" name="tab-control" :checked="initialWidget === 'dictionaries'"> <!--DICTIONARIES-->
+    <input type="radio" :id="$style.tab4" name="tab-control" :checked="initialWidget === 'highlighter'"> <!--HIGHLIGHTER-->
+    <input type="radio" :id="$style.tab5" name="tab-control" :checked="initialWidget === 'feedback'"> <!--FEEDBACK-->
 
     <ul>
         <li title="Wikipedia">
